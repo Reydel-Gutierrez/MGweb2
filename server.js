@@ -32,8 +32,31 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Login route
+// Login route Admin
 app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+  
+    try {
+      // Find user by username
+      const user = await User.findOne({ username });
+  
+      // Check if user exists and verify password
+      if (user && user.password === password && user.admin) {
+        res.json({ message: 'Login successful', username: user.username, name: user.fullName });
+
+      } else if (user && user.password === password){
+        res.status(401).json({ message: 'This user is no an Admin' });
+      } else {
+        res.status(401).json({ message: 'Invalid credentials' });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
+
+  // Only employee login
+  app.post('/loginEmployee', async (req, res) => {
     const { username, password } = req.body;
   
     try {
@@ -43,7 +66,7 @@ app.post('/login', async (req, res) => {
       // Check if user exists and verify password
       if (user && user.password === password) {
         res.json({ message: 'Login successful', username: user.username, name: user.fullName });
-      } else {
+      }  else {
         res.status(401).json({ message: 'Invalid credentials' });
       }
     } catch (error) {
@@ -229,6 +252,66 @@ app.post('/deleteTask', async (req, res) => {
   }
 });
 
+
+//employee punching
+
+const { UserPunch } = require('./db/db.js');
+
+// POST endpoint for /employeePunching
+app.post('/employeePunching', async (req, res) => {
+  const { username, fullname, date, time, action } = req.body;
+
+  try {
+    // Attempt to find a document for the user
+    let userPunch = await UserPunch.findOne({ username: username });
+
+    if (userPunch) {
+      // User exists, add a new punch to the punches array
+      userPunch.punches.push({ date, time, action });
+    } else {
+      // No document for the user, create a new one
+      userPunch = new UserPunch({
+        username,
+        fullname,
+        punches: [{ date, time, action }]
+      });
+    }
+
+    // Save changes to the database
+    await userPunch.save();
+
+    res.json({ message: 'Punch data processed successfully', data: userPunch });
+  } catch (error) {
+    console.error('Error processing punch data:', error);
+    res.status(500).json({ message: 'Error processing punch data', error: error });
+  }
+});
+
+
+// Finding employee punch
+app.post('/employeePunchHistory', async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    const userPunches = await UserPunch.findOne({ username: username });
+
+    if (!userPunches) {
+      return res.status(404).send('User not found');
+    }
+
+    // Send back the full document or a part of it as needed
+    res.json({
+      fullname: userPunches.fullname, // Include the fullname
+      punches: userPunches.punches    // Include the punches array
+      // You can include other fields here as necessary
+    });
+  } catch (error) {
+    console.error('Error fetching user punches:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+ 
 
   //rendering home page
   app.get('/home', (req, res) => {

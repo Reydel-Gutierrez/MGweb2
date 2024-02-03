@@ -1303,16 +1303,29 @@
   <!--   Core JS Files   -->
   
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Extract user information from the URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const username = urlParams.get('username');
-      const name = urlParams.get('name');
-  
-      // Display user information on the dashboard
-      const dashboardNameElement = document.querySelector('#dashboardName');
-      dashboardNameElement.textContent = `Welcome, ${name || ''}!`;
-    });
+document.addEventListener('DOMContentLoaded', function () {
+  // Extract user information from the URL
+  const urlParams = new URLSearchParams(window.location.search);
+
+  // Try to load user information from local storage
+  const storedUserInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+
+  // Update with new values from the URL if available
+  const userInfo = {
+    store_username: urlParams.get('username') || storedUserInfo.store_username,
+    store_name: urlParams.get('name') || storedUserInfo.store_name,
+    // Other user details
+  };
+
+  // Save user information to local storage
+  localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+  // Display user information on the dashboard
+  const dashboardNameElement = document.querySelector('#dashboardName');
+  dashboardNameElement.textContent = `Welcome, ${userInfo.store_name || ''}!`;
+});
+
+
   </script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

@@ -409,6 +409,47 @@
 
       <hr class="horizontal dark my-6">
 
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <div class="row align-items-center">
+                <div class="col-12 col-md-6">
+                  <form class="form-inline">
+                    <h3>Search Employee Punch</h3>
+                    <input id="usernameInput" class="form-control mr-sm-2" type="search" placeholder="Search by Username" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+                  </form>
+                  <hr>
+                </div>
+            </div>
+            </div> 
+    
+            
+              <div class="card-body px-0 pt-0 pb-2">
+                <div class="table-responsive p-0">
+                  <table class="table align-items-center mb-0 punch-table">
+                    <thead>
+                      <tr>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Full Name</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Punch In</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Punch Out</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Hours</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Comments</th>
+                      </tr>
+                    </thead>
+                    <tbody id="punchTableBody">
+                      <!-- Table content goes here -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+
   
     
 
@@ -474,16 +515,21 @@
   <!--   Core JS Files   -->
   
   <script>
+    
     document.addEventListener('DOMContentLoaded', function () {
-      // Extract user information from the URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const username = urlParams.get('username');
-      const name = urlParams.get('name');
-  
+    // Retrieve user information from localStorage
+    const storedUserInfo = localStorage.getItem("userInfo");
+
+    if (storedUserInfo) {
+      const userInfo = JSON.parse(storedUserInfo);
+
       // Display user information on the dashboard
       const dashboardNameElement = document.querySelector('#dashboardName');
-      dashboardNameElement.textContent = `Welcome, ${name || ''}!`;
-    });
+      dashboardNameElement.textContent = `Welcome, ${userInfo.store_name || ''}!`;
+
+    }
+  });
+    
   </script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -491,7 +537,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyOoA/dZIURMIcE2a4KSUpGa/LbJhcfwi" crossorigin="anonymous"></script>
 
 
-  <script src="routes/dashboard.js"></script>
+  <script src="routes/adminPayroll.js"></script>
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
   <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>

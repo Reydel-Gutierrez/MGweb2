@@ -76,14 +76,14 @@
             <div class="container">
                <div class="row justify-content-center">
                   <div class="col-lg-5 text-center mx-auto">
-                     <h1 class="text-white mb-2 mt-5">Hi!</h1>
+                     <h1 id="dashboardName" class="text-white mb-2 mt-5"></p></h1>
                      <p class="text-lead text-white">Use the following registration form to add a new MG Employee.</p>
                   </div>
                </div>
             </div>
          </div>
          <div class="container">
-            <div class="row mt-lg-n10 mt-md-n11 mt-n10">
+            <div class="row mt-lg-n12 mt-md-n11 mt-n10">
                <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
                   <div class="card z-index-0">
                      <div class="card-header text-center pt-4">
@@ -136,6 +136,24 @@
    </main>
 
    <!-- Core JS Files -->
+
+   <script>
+    
+      document.addEventListener('DOMContentLoaded', function () {
+      // Retrieve user information from localStorage
+      const storedUserInfo = localStorage.getItem("userInfo");
+  
+      if (storedUserInfo) {
+        const userInfo = JSON.parse(storedUserInfo);
+  
+        // Display user information on the dashboard
+        const dashboardNameElement = document.querySelector('#dashboardName');
+        dashboardNameElement.textContent = `Hi, ${userInfo.store_name || ''}!`;
+        
+      }
+    });
+      
+    </script>
    
    <script src="routes/newEmployee.js"></script>
    <script src="../assets/js/core/popper.min.js"></script>

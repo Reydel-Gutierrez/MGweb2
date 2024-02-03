@@ -46,9 +46,27 @@ const taskSchema = new mongoose.Schema({
 
 const Task = mongoose.model('Task', taskSchema);
 
+// Define a Schema for individual punches
+const punchRecordSchema = new mongoose.Schema({
+  date: String,
+  time: String,
+  action: String, // 'Clock In' or 'Clock Out'
+}, { _id: false }); // Prevents Mongoose from creating an _id for each punch record
+
+// Define the main Schema for user punches
+const userPunchSchema = new mongoose.Schema({
+  username: { type: String, unique: true }, // Ensures username is unique
+  fullname: String,
+  punches: [punchRecordSchema] // An array to store multiple punches
+});
+
+// Create a model from the schema
+const UserPunch = mongoose.model('UserPunch', userPunchSchema);
+
 module.exports = {
     db,
   User,
   Invoice,
   Task,
+  UserPunch,
 };

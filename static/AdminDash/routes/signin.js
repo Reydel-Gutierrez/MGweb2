@@ -27,8 +27,9 @@ document.addEventListener('DOMContentLoaded', function () {
           window.location.href = `http://localhost:3000/AdminDash/pages/dashboard.html?username=${data.username}&name=${data.name}`;
         } else {
           // Login failed
-          alert("Invalid Credentials");
+          
           console.error(data.message);
+          alert(data.message);
         }
       } catch (error) {
         console.error('Error:', error);
