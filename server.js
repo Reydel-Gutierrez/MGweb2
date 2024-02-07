@@ -311,7 +311,30 @@ app.post('/employeePunchHistory', async (req, res) => {
   }
 });
 
- 
+
+//Payroll schema
+const { Payroll } = require('./db/db.js');
+
+//employe Payroll record
+app.post('/employeeRegisterPay', async (req, res) => {
+  try {
+    const payrollData = new Payroll(req.body);
+    const savedData = await payrollData.save();
+    res.status(201).json(savedData);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// fetch payroll records
+app.get('/fetchPayrollRecords', async (req, res) => {
+  try {
+    const payrollRecords = await Payroll.find({});
+    res.json(payrollRecords);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
   //rendering home page
   app.get('/home', (req, res) => {

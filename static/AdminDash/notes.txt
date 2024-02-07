@@ -19,3 +19,11 @@ Employee --
         - Punch Card : Clock In, Clock Out buttons. Current Time and Date,
         - Timesheet: employees sees his own table with punches
         
+
+Change request
+    -- Employee should be able to submit a change request
+        -- Admin should be able to accept or deny request
+            --As admin accepts (Update database entry)
+            --As admin deny (Delete request)
+
+Pupulate a delete button with every new row in tables that once clicked lets you delete

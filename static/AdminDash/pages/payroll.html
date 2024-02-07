@@ -33,6 +33,9 @@
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/calendar/style.css">
+  
+ 
   <!-- Nepcha Analytics (nepcha.com) -->
   <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
   <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
@@ -142,7 +145,7 @@
         
         
         <li class="nav-item">
-          <a class="nav-link  " href="../pages/newEmployee.html">
+          <a class="nav-link  " href="../pages/registerEmployee.html">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>spaceship</title>
@@ -409,53 +412,271 @@
 
       <hr class="horizontal dark my-6">
 
-      <div class="row">
-        <div class="col-12">
-          <div class="card mb-4">
-            <div class="card-header pb-0">
-              <div class="row align-items-center">
-                <div class="col-12 col-md-6">
-                  <form class="form-inline">
-                    <h3>Search Employee Punch</h3>
-                    <input id="usernameInput" class="form-control mr-sm-2" type="search" placeholder="Search by Username" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
-                  </form>
-                  <hr>
+      <div class="container-fluid py-4">
+        <div class="row">
+           <!-- Left Side: Employee Punch Search and Payroll Records occupying more space -->
+           <div class="col-lg-8">
+                         <!-- Search Employee Punch Section: Half of the page width -->
+                         <div class="card mb-4">
+                          <div class="card-header pb-0">
+                              <div class="row align-items-center">
+                                  <div class="col-12">
+                                      <form class="form-inline">
+                                          <h6 class="mb-0">Employee Punch Search</h6>
+                                          <br>
+                                          <input id="usernameInput" class="form-control mr-sm-2" type="search" placeholder="Search by Username" aria-label="Search" style="width: 200px;">
+                                          <hr>
+                                          <button class="btn btn-primary my-2 my-sm-0" type="submit">Submit</button>
+                                      </form>
+                                      <hr>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="card-body px-0 pt-0 pb-2">
+                              <div class="table-responsive p-0">
+                                  <table class="table align-items-center mb-0 punch-table">
+                                      <thead>
+                                          <tr>
+                                              <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Full Name</th>
+                                              <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Date</th>
+                                              <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Punch In</th>
+                                              <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Punch Out</th>
+                                              <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Hours</th>
+                                              <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Comments</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody id="punchTableBody">
+                                          <!-- Table content goes here -->
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                      </div>
+
+
+                  <!-- Payroll Records -->
+
+              <div class="card mb-4">
+                <div class="card-header pb-0">
+                  <!-- Search form content -->
+                  <div class="row align-items-center">
+                    <div class="col-12">
+                      <form class="form-inline">
+                        
+                        <h6 class="mb-0">Payroll Records</h6>
+                        <div class="col-12 text-end">
+                          <ul class="nav justify-content-end">
+                              <li class="nav-item dropdown pe-2 d-flex align-items-center">
+                                  <a href="javascript:;" class="nav-link text-black p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="ni ni-bullet-list-67"></i>
+                                  </a>
+                                  <ul class="dropdown-menu dropdown-menu-end px-2 py-3 ms-n4" aria-labelledby="dropdownMenuButton">
+                                      <li class="mb-2">
+                                        <button class="dropdown-item border-radius-md" type="button" onclick="handleAddNewPay()">
+                                          Add new
+                                      </button>
+                                      </li>
+                                      <li class="mb-2">
+                                          <button class="dropdown-item border-radius-md" type="button" onclick="handleRemovePay()">
+                                          Delete
+                                          </button>
+                                      </li>
+                                  </ul>
+                              </li>
+                          </ul>
+                      </div>
+                    
+                        <br>
+                        
+      
+                        <!-- hidden form -->
+                        <div class="container mt-5" id="payFormContainer" style="display: none;">
+                          <form class="row g-3 align-items-center">
+                              <div class="col-auto">
+                                  <label for="fullName" class="form-label">Full Name</label>
+                                  <input type="text" id="fullName" class="form-control" placeholder="Full Name">
+                              </div>
+                              <div class="col-auto">
+                                  <label for="payRate" class="form-label">Pay Rate</label>
+                                  <input type="text" id="payRate" class="form-control" placeholder="Pay Rate">
+                              </div>
+                              <div class="col-auto">
+                                <label for="payRate" class="form-label">Hours</label>
+                                <input type="text" id="hours" class="form-control" placeholder="Pay Rate">
+                            </div>
+                              <div class="col-auto">
+                                  <label for="fromDate" class="form-label">From Date</label>
+                                  <input type="date" id="fromDate" class="form-control">
+                              </div>
+                              <div class="col-auto">
+                                  <label for="toDate" class="form-label">To Date</label>
+                                  <input type="date" id="toDate" class="form-control">
+                              </div>
+                              <div class="col-auto">
+                                  <label for="amount" class="form-label">Amount</label>
+                                  <input type="text" id="amount" class="form-control" placeholder="Amount">
+                              </div>
+                              <div class="col-auto">
+                                  <label for="payDate" class="form-label">Pay Date</label>
+                                  <input type="date" id="payDate" class="form-control">
+                              </div>
+                              <div class="col-auto">
+                                  <label for="comments" class="form-label">Comments</label>
+                                  <input type="text" id="comments" class="form-control" placeholder="Comments">
+                              </div>
+                              <div class="col-auto">
+                                  <button id="submitPayroll" type="submit" class="btn btn-primary">Submit</button>
+                              </div>
+                          </form>
+                      </div>
+                      <script>
+                        function handleAddNewPay() {
+                            // Toggle the visibility of the form
+                            const form = document.getElementById('payFormContainer');
+                            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                        }
+      
+                        </script>
+      
+      
+      
+                        <div class="container mt-5" id="removePayFormContainer" style="display: none;">
+                          <form class="row g-1 align-items-center">
+                              <div class="col-auto">
+                                  <input type="text" class="form-control" placeholder="Full Name">
+                              </div>
+                              <div class="col-auto">
+                                <input type="date" class="form-control" placeholder="From Date">
+                            </div>
+                            <div class="col-auto">
+                              <button type="button" class="btn btn-primary">Submit</button>
+                          </div>
+                        </form>
+                      </div>
+                      <script>
+                        function handleRemovePay() {
+                          // Toggle the visibility of the form
+                          const form = document.getElementById('removePayFormContainer');
+                          form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                      }
+      
+                      </script>
+      
+      
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
                 </div>
-            </div>
-            </div> 
-    
-            
-              <div class="card-body px-0 pt-0 pb-2">
-                <div class="table-responsive p-0">
-                  <table class="table align-items-center mb-0 punch-table">
-                    <thead>
-                      <tr>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Full Name</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Punch In</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Punch Out</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Hours</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Comments</th>
-                      </tr>
-                    </thead>
-                    <tbody id="punchTableBody">
-                      <!-- Table content goes here -->
-                    </tbody>
-                  </table>
+                <div class="card-body px-0 pt-0 pb-2">
+                  <!-- Table content -->
+                  <div class="table-responsive p-0">
+                    <table class="table align-items-center mb-0 punch-table">
+                      <thead>
+                        <tr>
+                          <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Full Name</th>
+                          <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Pay Rate</th>
+                          <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Hours</th>
+                          <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">From Date</th>
+                          <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">To Date</th>
+                          <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Amount</th>
+                          <th class="text-uppercase text-dark text-xxs font-weight-bolder ps-2">Comments</th>
+                        </tr>
+                      </thead>
+                      <tbody id="payrollRecordsTable">
+                        <!-- Table content goes here -->
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-    
-
+          
   
-    
 
-     
+
+          <!-- Right side col -->
+    
+          <div class="col-lg-4">
+          
+    
+                 <!-- Calendar Section: Half of the page width -->
+                  <div class="card mb-4">
+                    <div class="calendar">
+                      <!-- Calendar content -->
+                      <div class="row border-bottom pb-2 mb-3">
+                        <div class="col text-center">
+                          <h2 id="monthAndYear"></h2>
+                        </div>
+                      </div>
+                      <div class="row d-none d-lg-flex pb-2" id="weekday-header">
+                        <!-- Weekday headers will be generated by JavaScript -->
+                      </div>
+                      <div id="calendar-body" class="calendar-body">
+                        <!-- Calendar days will be generated by JavaScript -->
+                      </div>
+                      <div class="row pt-3">
+                        <div class="col text-center">
+                          <button id="previous" class="btn btn-outline-primary">Previous</button>
+                          <button id="next" class="btn btn-outline-primary">Next</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+                  <!-- Calculator Session -->
+                
+                  
+                    <div class="card">
+                      <div class="card-header text-center">
+                        <h5 class="card-title">Calculator</h5>
+                      </div>
+                      <div class="card-body calculator-body">
+                        <input type="text" id="calculator-screen" class="form-control text-right mb-3" disabled>
+                        <div class="row mt-2">
+                          <div class="col-4 p-1"><button type="button" class="btn btn-primary w-100" id="calc-equals">Enter</button></div>
+                          <div class="col-3 p-1"><button type="button" class="btn btn-danger calc-btn w-100" id="calc-clear">C</button></div>
+                        </div>
+                        <div class="calculator-keys">
+                          <div class="row">
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="1">1</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="2">2</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="3">3</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-dark operator w-100" value="+">+</button></div>
+                          </div>
+                          <div class="row">
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="4">4</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="5">5</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="6">6</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-dark operator w-100" value="-">-</button></div>
+                          </div>
+                          <div class="row">
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="7">7</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="8">8</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="9">9</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-dark operator w-100" value="*">&times;</button></div>
+                          </div>
+                          <div class="row">
+                            <div class="col-3 p-1"><button type="button" class="btn btn-light calc-btn w-100" value="0">0</button></div>
+                            <div class="col-3 p-1"><button type="button" class="btn btn-secondary calc-btn w-100" value=".">.</button></div>
+                            
+                            <div class="col-3 p-1"><button type="button" class="btn btn-dark operator w-100" value="/">&divide;</button></div>
+                          </div>
+                          
+                        </div>
+                      </div>
+                    </div>
+                  
+
+
+
+          </div>
       
-      
+        </div>
+      </div>
+
     </div>
   </main>
   <div class="fixed-plugin">
@@ -538,6 +759,10 @@
 
 
   <script src="routes/adminPayroll.js"></script>
+  <script src="../assets/calendar/calender.js"></script>
+  <script src="../assets/calculator/script.js"></script>
+
+
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
   <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>

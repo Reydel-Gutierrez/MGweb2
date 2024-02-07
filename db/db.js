@@ -63,10 +63,25 @@ const userPunchSchema = new mongoose.Schema({
 // Create a model from the schema
 const UserPunch = mongoose.model('UserPunch', userPunchSchema);
 
+// Create schema for Payroll record
+const payrollSchema = new mongoose.Schema({
+  fullName: { type: String, required: true },
+  payRate: { type: Number, required: true },
+  hours: { type: Number, required: true },
+  fromDate: { type: Date, required: true },
+  toDate: { type: Date, required: true },
+  amount: { type: Number, required: true },
+  payDate: { type: Date, required: true },
+  comments: { type: String, required: false } // Assuming comments are optional
+});
+
+const Payroll = mongoose.model('Payroll', payrollSchema);
+
 module.exports = {
     db,
   User,
   Invoice,
   Task,
   UserPunch,
+  Payroll,
 };
