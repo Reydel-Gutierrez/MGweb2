@@ -21,7 +21,7 @@
   <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
   <link rel="icon" type="image/png" href="../img/logo/log5.png">
   <title>
-    MG - Admin
+    MG - Employee Dash
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -33,6 +33,7 @@
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
   <!-- Nepcha Analytics (nepcha.com) -->
   <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
   <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
@@ -44,7 +45,7 @@
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/soft-ui-dashboard/pages/dashboard.html " target="_blank">
         <img src="../img/logo/logoo.png" class="navbar-brand-img h-100" alt="main_logo">
-        <span class="ms-1 font-weight-bold">MG Admin Dash</span>
+        <span class="ms-1 font-weight-bold">MG Employee Dash</span>
       </a>
     </div>
     <hr class="horizontal dark mt-0">
@@ -113,11 +114,12 @@
 
 
         <li class="nav-item mt-3">
-          <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Account pages</h6>
+          <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Payroll pages</h6>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link  active" href="../pages/payroll.html">
+          <a class="nav-link " href="../pages/punchNow.html"> 
+          <!-- <a class="nav-link  " href="../pages/punch.html"> -->
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>spaceship</title>
@@ -135,14 +137,13 @@
                 </g>
               </svg>
             </div>
-            <span class="nav-link-text ms-1">Payroll</span>
+            <span class="nav-link-text ms-1">Punch Now</span>
           </a>
         </li>
 
-        
-        
         <li class="nav-item">
-          <a class="nav-link  " href="../pages/newEmployee.html">
+          
+          <a class="nav-link" href="../pages/punchHistory.html">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>spaceship</title>
@@ -160,12 +161,42 @@
                 </g>
               </svg>
             </div>
-            <span class="nav-link-text ms-1">Register Employee</span>
+            <span class="nav-link-text ms-1">Punch History</span>
           </a>
         </li>
 
+        
+        
         <li class="nav-item">
-          <a class="nav-link  " href="../pages/profile.html">
+           <a class="nav-link active" href="../pages/paymentHistory.html"> 
+          <!-- <a class="nav-link" href="../pages/newEmployee.html"> -->
+            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+              <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <title>spaceship</title>
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                  <g transform="translate(-1720.000000, -592.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                    <g transform="translate(1716.000000, 291.000000)">
+                      <g transform="translate(4.000000, 301.000000)">
+                        <path class="color-background" d="M39.3,0.706666667 C38.9660984,0.370464027 38.5048767,0.192278529 38.0316667,0.216666667 C14.6516667,1.43666667 6.015,22.2633333 5.93166667,22.4733333 C5.68236407,23.0926189 5.82664679,23.8009159 6.29833333,24.2733333 L15.7266667,33.7016667 C16.2013871,34.1756798 16.9140329,34.3188658 17.535,34.065 C17.7433333,33.98 38.4583333,25.2466667 39.7816667,1.97666667 C39.8087196,1.50414529 39.6335979,1.04240574 39.3,0.706666667 Z M25.69,19.0233333 C24.7367525,19.9768687 23.3029475,20.2622391 22.0572426,19.7463614 C20.8115377,19.2304837 19.9992882,18.0149658 19.9992882,16.6666667 C19.9992882,15.3183676 20.8115377,14.1028496 22.0572426,13.5869719 C23.3029475,13.0710943 24.7367525,13.3564646 25.69,14.31 C26.9912731,15.6116662 26.9912731,17.7216672 25.69,19.0233333 L25.69,19.0233333 Z"></path>
+                        <path class="color-background opacity-6" d="M1.855,31.4066667 C3.05106558,30.2024182 4.79973884,29.7296005 6.43969145,30.1670277 C8.07964407,30.6044549 9.36054508,31.8853559 9.7979723,33.5253085 C10.2353995,35.1652612 9.76258177,36.9139344 8.55833333,38.11 C6.70666667,39.9616667 0,40 0,40 C0,40 0,33.2566667 1.855,31.4066667 Z"></path>
+                        <path class="color-background opacity-6" d="M17.2616667,3.90166667 C12.4943643,3.07192755 7.62174065,4.61673894 4.20333333,8.04166667 C3.31200265,8.94126033 2.53706177,9.94913142 1.89666667,11.0416667 C1.5109569,11.6966059 1.61721591,12.5295394 2.155,13.0666667 L5.47,16.3833333 C8.55036617,11.4946947 12.5559074,7.25476565 17.2616667,3.90166667 L17.2616667,3.90166667 Z"></path>
+                        <path class="color-background opacity-6" d="M36.0983333,22.7383333 C36.9280725,27.5056357 35.3832611,32.3782594 31.9583333,35.7966667 C31.0587397,36.6879974 30.0508686,37.4629382 28.9583333,38.1033333 C28.3033941,38.4890431 27.4704606,38.3827841 26.9333333,37.845 L23.6166667,34.53 C28.5053053,31.4496338 32.7452344,27.4440926 36.0983333,22.7383333 L36.0983333,22.7383333 Z"></path>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </svg>
+            </div>
+            <span class="nav-link-text ms-1">Payment History</span>
+          </a>
+        </li>
+
+        <li class="nav-item mt-3">
+          <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Other Pages</h6>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" onclick="alert('Feature under development!');"> 
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 46 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>customer-support</title>
@@ -225,9 +256,6 @@
           </div>
           <ul class="navbar-nav  justify-content-end">
             <li class="nav-item d-flex align-items-center">
-              <a class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" href="https://chat.openai.com/">Chat GPT</a>
-            </li>
-            <li class="nav-item d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
                 <i class="fa fa-user me-sm-1"></i>
                 <div id="dashboardName"></div>
@@ -255,215 +283,37 @@
       </div>
     </nav>
     <!-- End Navbar -->
-    <div class="container-fluid py-4">
-      <div class="row">
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Tasks On Demand</p>
-                    <h5 class="font-weight-bolder mb-0">
-                      <div id="taskCount"></div>
-                      <!-- <span class="text-success text-sm font-weight-bolder">+55%</span> -->
-                    </h5>
-                  </div>
-                </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-bell-55 text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Employees</p>
-                    <h5 class="font-weight-bolder mb-0" id="totalEmployeesCount">
-                      <!-- <span class="text-success text-sm font-weight-bolder">+3%</span> -->
-                    </h5>
-                  </div>
-                </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-circle-08 text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Pending Invoices</p>
-                    <h5 class=" text-danger font-weight-bolder mb-0">
-                      <div id="totalPending"></div>
-                      <!-- <span class="text-danger text-sm font-weight-bolder">-2%</span> -->
-                    </h5>
-                  </div>
-                </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-collection text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold dm">Date</p>
-                    <h5 id="datetime" class="font-weight-bolder mb-0"></h5>
-                  </div>
-                </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-calendar-grid-58 text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <script>
-          // Function to update date and time
-          function updateDateTime() {
-            var dateTimeElement = document.getElementById('datetime');
-            var now = new Date();
-            var formattedDate = now.toLocaleDateString();
-            var formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
-            // Display the formatted date and time
-            dateTimeElement.innerHTML = `<span class="dm">${formattedDate}</span> <span class="text-sm">${formattedTime}</span>`;
-          }
-        
-          // Update date and time initially
-          updateDateTime();
-        
-          // Update date and time every minute (60000 milliseconds)
-          setInterval(updateDateTime, 60000);
-        </script>
+
+
+
 
       </div>
-      <!-- <div class="row mt-4">
-        <div class="col-lg-7 mb-lg-0 mb-4">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-lg-6">
-                  <div class="d-flex flex-column h-100">
-                    <p class="mb-1 pt-2 text-bold">Built by developers</p>
-                    <h5 class="font-weight-bolder">Soft UI Dashboard</h5>
-                    <p class="mb-5">From colors, cards, typography to complex elements, you will find the full documentation.</p>
-                    <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
-                      Read More
-                      <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
-                  <div class="bg-gradient-primary border-radius-lg h-100">
-                    <img src="../assets/img/shapes/waves-white.svg" class="position-absolute h-100 w-50 top-0 d-lg-block d-none" alt="waves">
-                    <div class="position-relative d-flex align-items-center justify-content-center h-100">
-                      <img class="w-100 position-relative z-index-2 pt-4" src="../assets/img/illustrations/rocket-white.png" alt="rocket">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-5">
-          <div class="card h-100 p-3">
-            <div class="overflow-hidden position-relative border-radius-lg bg-cover h-100" style="background-image: url('../assets/img/ivancik.jpg');">
-              <span class="mask bg-gradient-dark"></span>
-              <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
-                <h5 class="text-white font-weight-bolder mb-4 pt-2">Work with the rockets</h5>
-                <p class="text-white">Wealth creation is an evolutionarily recent positive-sum game. It is all about who take the opportunity first.</p>
-                <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
-                  Read More
-                  <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
 
       <hr class="horizontal dark my-6">
+
+
+
+
+      <hr><br>
+      
 
       <div class="row">
         <div class="col-12">
           <div class="card mb-4">
-            <div class="card-header pb-0">
+            <div class="card-header pb-0 bg-gradient3">
               <div class="row align-items-center">
                 <div class="col-12 col-md-6">
                   <form class="form-inline">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    <H4>Payment History</H4>            
+                    <div id="tableName"></div>                     
                   </form>
+                  
                   <hr>
                 </div>
-                 <!-- <div class="col-6 text-end">
-                    <ul class="nav justify-content-end">
-                        <li class="nav-item dropdown pe-2 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-black p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="ni ni-bullet-list-67"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end px-2 py-3 ms-n4" aria-labelledby="dropdownMenuButton">
-                                <li class="mb-2">
-                                  <button class="dropdown-item border-radius-md" onclick="handleDeleteEmployee()">
-                                    Delete Punch
-                                </button>
-                                </li>
-                                <li class="mb-2">
-                                    <button class="dropdown-item border-radius-md" onclick="handleDeleteEmployee()">
-                                        Delete Punch
-                                    </button>
-                                </li>                         
-                            </ul>
-                        </li>
-                    </ul>
-                </div> -->
             </div>
             </div> 
-
-                <!-- Delete Employee, Hidden Form -->
-                <!-- <div id="deleteEmployeeForm" style="display: none;">
-                  <form class="mx-auto w-30">
-                  <div class="mb-3">
-                    <label for="EmployeeDelete" class="form-label">Employee ID</label>
-                    <input type="text" class="form-control" id="employeeIDToDelete" required>
-                </div>
-                  <button type="button" class="btn btn-danger btn-sm" onclick="deleteEmployee()">Delete Task</button>
-                  </form>
-                </div>
-                <script>
-                  function handleDeleteEmployee() {
-                      // Toggle the visibility of the form
-                      const form = document.getElementById('deleteEmployeeForm');
-                      form.style.display = form.style.display === 'none' ? 'block' : 'none';
-                  }
-              </script> -->
-
-
+    
             
               <div class="card-body px-0 pt-0 pb-2">
                 <div class="table-responsive p-0">
@@ -471,13 +321,16 @@
                     <thead>
                       <tr>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Full Name</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Punch In</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Punch Out</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Pay Rate</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Hours</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">From Date</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">To Date</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Amount</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Pay Date</th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Comments</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="payTableBody">
                       <!-- Table content goes here -->
                     </tbody>
                   </table>
@@ -487,12 +340,60 @@
           </div>
         </div>
 
-  
+        <script>
+
+            function populatePaymentHistory(name) {
+                const payTableBody = document.getElementById('payTableBody');
+
+                // Clear previous entries
+                payTableBody.innerHTML = '';
+
+                // Replace `http://example.com` with your actual backend URL
+                fetch('/employeePayHistory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ fullName: name })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Iterate over each pay record and append it to the table
+                    data.forEach(pay => {
+                        const row = payTableBody.insertRow();
+                        row.insertCell(0).textContent = pay.fullName;
+                        row.insertCell(1).textContent = pay.payRate;
+                        row.insertCell(2).textContent = pay.hours;
+                        row.insertCell(3).textContent = new Date(pay.fromDate).toLocaleDateString();
+                        row.insertCell(4).textContent = new Date(pay.toDate).toLocaleDateString();
+                        row.insertCell(5).textContent = pay.amount;
+                        row.insertCell(6).textContent = new Date(pay.payDate).toLocaleDateString();
+                        row.insertCell(7).textContent = pay.comments || 'N/A'; // Handle missing comments
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching payment history:', error);
+                    // Optionally, insert a row indicating the fetch failed
+                    payTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Failed to load payment history</td></tr>';
+                });
+            }
+
+
+
+        </script>
+
+           
+    
+    
     
 
      
-      
-      
+     
     </div>
   </main>
   <div class="fixed-plugin">
@@ -552,30 +453,40 @@
   <!--   Core JS Files   -->
   
   <script>
-    
-    document.addEventListener('DOMContentLoaded', function () {
-    // Retrieve user information from localStorage
-    const storedUserInfo = localStorage.getItem("userInfo");
+document.addEventListener('DOMContentLoaded', function () {
+  // Extract user information from the URL
+  const urlParams = new URLSearchParams(window.location.search);
 
-    if (storedUserInfo) {
-      const userInfo = JSON.parse(storedUserInfo);
+  // Try to load user information from local storage
+  const storedUserInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
 
-      // Display user information on the dashboard
-      const dashboardNameElement = document.querySelector('#dashboardName');
-      dashboardNameElement.textContent = `Welcome, ${userInfo.store_name || ''}!`;
+  // Update with new values from the URL if available
+  const userInfo = {
+    store_username: urlParams.get('username') || storedUserInfo.store_username,
+    store_name: urlParams.get('name') || storedUserInfo.store_name,
+    // Other user details
+  };
 
-    }
-  });
-    
+  // Save user information to local storage
+  localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+  // Display user information on the dashboard
+  const dashboardNameElement = document.querySelector('#dashboardName');
+  dashboardNameElement.textContent = `Welcome, ${userInfo.store_name || ''}!`;
+
+  const tableNameElement = document.querySelector('#tableName');
+  tableNameElement.textContent = userInfo.store_name;
+ populatePaymentHistory(userInfo.store_name);
+});
+
+
   </script>
 
-<script src="routes/dashboard.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-fzPeXwY94C2v0HBB6U1io/5Bc5ozkKMf1bDtmM3Rr4qdHYH9JS7W4Rf4La0ACs7r" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyOoA/dZIURMIcE2a4KSUpGa/LbJhcfwi" crossorigin="anonymous"></script>
 
-
-
+  <script src="/static/EmployeeDash/pages/routes/employeeHistory.js"></script>
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
   <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>

@@ -1,0 +1,14 @@
+/* Informative */
+.bg-gradient1 {
+  background: linear-gradient(90deg,#141e30 0%, #243b55 100%);
+}
+
+/* Cool */
+.bg-gradient2 {
+  background: linear-gradient(90deg,#ff7e5f 0%, #feb47b 100%);
+}
+
+/* Tables */
+.bg-gradient3 {
+  background: linear-gradient(90deg, #d7ede2  0%, #014871 100%); 
+}

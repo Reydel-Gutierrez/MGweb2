@@ -31,6 +31,7 @@
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
   <!-- Nepcha Analytics (nepcha.com) -->
@@ -117,7 +118,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link " onclick="alert('Feature under development!');"> 
+          <a class="nav-link " href="../pages/punchNow.html"> 
           <!-- <a class="nav-link  " href="../pages/punch.html"> -->
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -141,8 +142,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link  active"> 
-          <!-- <a class="nav-link  " href="../pages/punches.html"> -->
+          <a class="nav-link  active" href="../pages/punchHistory.html">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>spaceship</title>
@@ -167,7 +167,7 @@
         
         
         <li class="nav-item">
-           <a class="nav-link" onclick="alert('Feature under development!');"> 
+           <a class="nav-link" href="../pages/paymentHistory.html"> 
           <!-- <a class="nav-link" href="../pages/newEmployee.html"> -->
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -300,7 +300,7 @@
       <div class="row">
         <div class="col-12">
           <div class="card mb-4">
-            <div class="card-header pb-0">
+            <div class="card-header pb-0 bg-gradient3">
               <div class="row align-items-center">
                 <div class="col-12 col-md-6">
                   <form class="form-inline">
@@ -312,6 +312,70 @@
             </div>
             </div> 
     
+            <!-- Create here -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changeRequestModal">
+              Open Change Request Form
+            </button>
+            <!-- Change Request Modal -->
+                    <div class="modal fade" id="changeRequestModal" tabindex="-1" aria-labelledby="changeRequestModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="changeRequestModalLabel">Change Request</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Form -->
+                            <form>
+                              <!-- Original Date, Action, Time -->
+                              <div class="mb-3">
+                                <label for="originalDate" class="form-label">Original Date</label>
+                                <input type="date" class="form-control" id="originalDate">
+                              </div>
+                              <div class="mb-3">
+                                <label for="originalAction" class="form-label">Original Action</label>
+                                <select class="form-control" id="originalAction">
+                                  <option>Punch In</option>
+                                  <option>Punch Out</option>
+                                </select>
+                              </div>
+                              <div class="mb-3">
+                                <label for="originalTime" class="form-label">Time of Punch</label>
+                                <input type="time" class="form-control" id="originalTime">
+                              </div>
+                            
+                              <!-- Change To: Date, Action, Time -->
+                              <h6 class="mt-4 mb-2">Change to:</h6>
+                              <div class="mb-3">
+                                <label for="newDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="newDate">
+                              </div>
+                              <div class="mb-3">
+                                <label for="newAction" class="form-label">Action</label>
+                                <select class="form-control" id="newAction">
+                                  <option>Punch In</option>
+                                  <option>Punch Out</option>
+                                </select>
+                              </div>
+                              <div class="mb-3">
+                                <label for="newTime" class="form-label">Time</label>
+                                <input type="time" class="form-control" id="newTime">
+                              </div>
+                              <div class="mb-3">
+                                <label for="newComments" class="form-label">Comments</label>
+                                <input type="text" class="form-control" id="newComments">
+                              </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary">Submit Request</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+            
             
               <div class="card-body px-0 pt-0 pb-2">
                 <div class="table-responsive p-0">
@@ -337,7 +401,59 @@
         </div>
 
            
-    
+
+        <!-- Script to submit a change request -->
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const submitButton = document.querySelector('.modal-footer .btn-primary');
+            submitButton.addEventListener('click', function() {
+
+              const storedUserInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+              // Gather values from the form
+              const originalDate = document.getElementById('originalDate').value;
+              const originalAction = document.getElementById('originalAction').value;
+              const originalTime = document.getElementById('originalTime').value;
+              const newDate = document.getElementById('newDate').value;
+              const newAction = document.getElementById('newAction').value;
+              const newTime = document.getElementById('newTime').value;
+              const newComments = document.getElementById('newComments').value; // Corrected the ID here
+        
+              // Prepare data for submission
+              const data = {
+                fullName: storedUserInfo.store_name, // Use stored name or a default
+                originalDate: new Date(originalDate).getTime(), // Convert to timestamp
+                originalAction: originalAction === 'Punch In' ? 1 : 0, // Example conversion, adjust as necessary
+                originalTime: new Date(`${originalDate}T${originalTime}`),
+                newDate: new Date(newDate),
+                newAction: newAction === 'Punch In' ? 1 : 0, // Example conversion, adjust as necessary
+                newTime: new Date(`${newDate}T${newTime}`),
+                newComments: newComments
+              };
+        
+              // Use Fetch API to send data
+              fetch('http://localhost:3000/changePunchRequest', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+              })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Success:', data);
+                // Close modal and reset form, or display a success message
+                $('#changeRequestModal').modal('hide');
+                alert('Change request submitted');
+                // Optionally reset the form or provide feedback to the user
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+                // Optionally provide feedback to the user
+              });
+            });
+          });
+        </script>
+        
 
      
      

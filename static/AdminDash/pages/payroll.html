@@ -34,6 +34,7 @@
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/calendar/style.css">
+  <link rel="stylesheet" href="../assets/css/gradient.css">
   
  
   <!-- Nepcha Analytics (nepcha.com) -->
@@ -412,13 +413,48 @@
 
       <hr class="horizontal dark my-6">
 
+      <div class="container-fluid my-5"> <!-- Changed to container-fluid for full width -->
+        <div class="row">
+            <div class="col-12 mx-auto"> <!-- Adjusted for full width -->
+                <div class="card text-dark bg-light mb-3">
+                    <div class="card-header bg-gradient2 text-white" id="requestCountTitle"># Punch Requests to be Reviewed</div>
+                    <div class="card-body">
+                        
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Full Name</th>
+                                        <th scope="col">Original Date</th>
+                                        <th scope="col">Original Action</th>
+                                        <th scope="col">Original Time</th>
+                                        <th scope="col">New Date</th>
+                                        <th scope="col">New Action</th>
+                                        <th scope="col">New Time</th>
+                                        <th scope="col">Comments</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="punchRequestTableBody">
+                                    <!-- Dynamically loaded punch request rows will go here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
       <div class="container-fluid py-4">
         <div class="row">
            <!-- Left Side: Employee Punch Search and Payroll Records occupying more space -->
            <div class="col-lg-8">
                          <!-- Search Employee Punch Section: Half of the page width -->
                          <div class="card mb-4">
-                          <div class="card-header pb-0">
+                          <div class="card-header pb-0 bg-gradient3">
                               <div class="row align-items-center">
                                   <div class="col-12">
                                       <form class="form-inline">
@@ -457,7 +493,7 @@
                   <!-- Payroll Records -->
 
               <div class="card mb-4">
-                <div class="card-header pb-0">
+                <div class="card-header pb-0 bg-gradient3">
                   <!-- Search form content -->
                   <div class="row align-items-center">
                     <div class="col-12">
@@ -630,7 +666,7 @@
                 
                   
                     <div class="card">
-                      <div class="card-header text-center">
+                      <div class="card-header text-center bg-gradient2">
                         <h5 class="card-title">Calculator</h5>
                       </div>
                       <div class="card-body calculator-body">

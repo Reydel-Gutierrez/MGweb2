@@ -77,6 +77,19 @@ const payrollSchema = new mongoose.Schema({
 
 const Payroll = mongoose.model('Payroll', payrollSchema);
 
+const punchRequestSchema = new mongoose.Schema({
+  fullName: { type: String, required: true },
+  originalDate: { type: Number, required: false },
+  originalAction: { type: Number, required: false },
+  originalTime: { type: Date, required: false },
+  newDate: { type: Date, required: true },
+  newAction: { type: Number, required: true },
+  newTime: { type: Date, required: true },
+  newComments: { type: String, required: false } // Assuming comments are optional
+});
+
+const PunchRequest = mongoose.model('PunchRequest', punchRequestSchema);
+
 module.exports = {
     db,
   User,
@@ -84,4 +97,5 @@ module.exports = {
   Task,
   UserPunch,
   Payroll,
+  PunchRequest,
 };

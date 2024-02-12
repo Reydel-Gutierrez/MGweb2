@@ -31,6 +31,7 @@
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/calendar/style.css">
@@ -161,7 +162,7 @@
         
         
         <li class="nav-item">
-          <a class="nav-link  " href="../pages/register.html">
+          <a class="nav-link  " href="../pages/registerEmployee.html">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>spaceship</title>
@@ -247,12 +248,16 @@
               <a class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" href="https://chat.openai.com/">Chat GPT</a>
             </li>
             <li class="nav-item d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa fa-user me-sm-1"></i>
-                <div id="dashboardName"></div>
+              <a href="javascript:;" class="nav-link text-body font-weight-bold px-2">
+                <i class="fa fa-bell me-sm-1"></i>
               </a>
             </li>
-            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+            <li class="nav-item d-flex align-items-center">
+              <a href="javascript:;" class="nav-link text-body font-weight-bold px-2">
+                <i class="fa fa-user me-sm-1"></i>
+              </a>
+            </li>
+            <!-- <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                 <div class="sidenav-toggler-inner">
                   <i class="sidenav-toggler-line"></i>
@@ -260,9 +265,9 @@
                   <i class="sidenav-toggler-line"></i>
                 </div>
               </a>
-            </li>
+            </li> -->
             <li class="nav-item px-3 d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body p-0">
+              <a href="javascript:;" class="nav-link text-body p-0 ">
                 <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
               </a>
             </li>
@@ -463,10 +468,10 @@
 
    <div class="col-lg-4 col-md-6">
     <div class="card h-100">
-      <div class="card-header pb-0 p-3">
+      <div class="card-header pb-0 p-3 bg-gradient2 text-white">
         <div class="row">
           <div class="col-6 d-flex align-items-center">
-              <h6 class="mb-0">Tasks Table</h6>
+              <h6 class="mb-0 ">Tasks Table</h6>
           </div>
           <!-- Drop Down menu-->
           <div class="col-6 text-end">
@@ -570,7 +575,7 @@
     <div class = "row">
       <div class="col-lg-8" >
         <div class="card h-100">
-            <div class="card-header pb-0 p-3">
+            <div class="card-header pb-0 p-3 bg-gradient3">
                 <div class="row">
                     <div class="col-2 d-flex align-items-center">
                         <h6 class="mb-0">Invoices Table</h6>
@@ -603,6 +608,7 @@
                   </div>
                 </div>
             </div>
+          
 
             <!-- Add Invoice hidden form-->
             <div id="addNewInvoiceForm" style="display: none;">
@@ -728,7 +734,7 @@
       <div class="row">
         <div class="col-12">
           <div class="card mb-4">
-            <div class="card-header pb-0">
+            <div class="card-header pb-0 bg-gradient3">
               <div class="row">
                 <div class="col-6 d-flex align-items-center">
                     <h6 class="mb-0">Employees Table</h6>
@@ -741,7 +747,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end px-2 py-3 ms-n4" aria-labelledby="dropdownMenuButton">
                                 <li class="mb-2">
-                                  <a href="newEmployee.html" class="dropdown-item border-radius-md">
+                                  <a href="reg.html" class="dropdown-item border-radius-md">
                                     Add New
                                   </a>
                                 </li>
@@ -754,6 +760,7 @@
                         </li>
                     </ul>
                 </div>
+                <hr>
             </div>
             </div>
 

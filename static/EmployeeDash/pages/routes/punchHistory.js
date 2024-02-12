@@ -1,4 +1,3 @@
-
 function fetchAndPopulatePunchHistory(username) {
     const punchTableBody = document.getElementById('punchTableBody');
 

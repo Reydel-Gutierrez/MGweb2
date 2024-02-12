@@ -336,6 +336,58 @@ app.get('/fetchPayrollRecords', async (req, res) => {
   }
 });
 
+// fetch employee pay record as employee request
+app.post('/employeePayHistory', async (req, res) => {
+  const { fullName } = req.body;
+
+  try {
+    // Find all pay records matching the employee's full name
+    const userPays = await Payroll.find({ fullName: fullName });
+
+    if (!userPays || userPays.length === 0) {
+      return res.status(404).send('User not found');
+    }
+
+    // Send back all matching pay records
+    res.json(userPays);
+  } catch (error) {
+    console.error('Error fetching user pay records:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+
+//Punch request submission route
+const { PunchRequest } = require('./db/db.js');
+
+// Route to handle change requests
+app.post('/changePunchRequest', async (req, res) => {
+  try {
+    // Create a new punch request using the data from the request body
+    const newPunchRequest = new PunchRequest(req.body);
+
+    // Save the new punch request to the database
+    await newPunchRequest.save();
+
+    // Respond back to the frontend with a success message
+    res.status(201).send({ message: 'Punch change request submitted successfully.' });
+  } catch (error) {
+    // Handle any errors that occur during the save operation
+    res.status(400).send({ message: 'Error submitting punch change request.', error: error.message });
+  }
+});
+
+// Route to fetch punch requests
+app.get('/fetchPunchRequest', async (req, res) => {
+  try {
+    const punchRequests = await PunchRequest.find(); // Fetch all punch requests
+    res.status(200).json(punchRequests); // Send punch requests as JSON
+  } catch (error) {
+    console.error('Error fetching punch requests:', error);
+    res.status(500).send('Error fetching punch requests');
+  }
+});
+
   //rendering home page
   app.get('/home', (req, res) => {
     res.sendFile(path.join(__dirname, 'static', 'Web', 'home.html'));

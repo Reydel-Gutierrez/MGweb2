@@ -208,3 +208,47 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
+
+
+// fetch employee punch change request
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/fetchPunchRequest')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const tableBody = document.getElementById('punchRequestTableBody');
+        const requestCountTitle = document.getElementById('requestCountTitle');
+        
+        // Update the title with the total number of requests
+        requestCountTitle.textContent = `${data.length} Punch Requests to be Reviewed`;
+
+        // Clear existing table rows
+        tableBody.innerHTML = '';
+
+        // Iterate over each punch request and add rows to the table body
+        data.forEach((request, index) => {
+            const row = `<tr>
+                <th scope="row">${index + 1}</th>
+                <td>${request.fullName}</td>
+                <td>${request.originalDate}</td>
+                <td>${request.originalAction}</td>
+                <td>${request.originalTime}</td>
+                <td>${request.newDate}</td>
+                <td>${request.newAction}</td>
+                <td>${request.newTime}</td>
+                <td>${request.newComments}</td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching punch requests:', error);
+        // Optionally, implement error handling, e.g., show an error message on the UI
+    });
+});
+
+
