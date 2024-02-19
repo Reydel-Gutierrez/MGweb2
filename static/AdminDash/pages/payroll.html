@@ -418,6 +418,14 @@
             <div class="col-12 mx-auto"> <!-- Adjusted for full width -->
                 <div class="card text-dark bg-light mb-3">
                     <div class="card-header bg-gradient2 text-white" id="requestCountTitle"># Punch Requests to be Reviewed</div>
+                    <form id="adminActionForm">
+                      <div class="d-flex align-items-center">
+                          <input id="idInput" class="form-control mr-2" type="search" placeholder="ID" aria-label="Search" style="width: 70px;">
+                          <button class="btn btn-primary my-2 my-sm-0 mr-2" data-action="accept">Accept</button>
+                          <button class="btn btn-secondary my-2 my-sm-0" data-action="deny">Deny</button>
+                      </div>
+                  </form>
+                  
                     <div class="card-body">
                         
                         <div class="table-responsive">
@@ -458,7 +466,7 @@
                               <div class="row align-items-center">
                                   <div class="col-12">
                                       <form class="form-inline">
-                                          <h6 class="mb-0">Employee Punch Search</h6>
+                                          <h6 class="mb-0" style="color: white">Employee Punch Search</h6>
                                           <br>
                                           <input id="usernameInput" class="form-control mr-sm-2" type="search" placeholder="Search by Username" aria-label="Search" style="width: 200px;">
                                           <hr>
@@ -470,6 +478,7 @@
                           </div>
                           <div class="card-body px-0 pt-0 pb-2">
                               <div class="table-responsive p-0">
+                                <button onclick="populateWithUserRows()" class="btn btn-light">Choose Rows to Display</button>
                                   <table class="table align-items-center mb-0 punch-table">
                                       <thead>
                                           <tr>
@@ -484,7 +493,9 @@
                                       <tbody id="punchTableBody">
                                           <!-- Table content goes here -->
                                       </tbody>
+                                      
                                   </table>
+                                  
                               </div>
                           </div>
                       </div>
@@ -499,12 +510,12 @@
                     <div class="col-12">
                       <form class="form-inline">
                         
-                        <h6 class="mb-0">Payroll Records</h6>
+                        <h6 class="mb-0" style="color: white">Payroll Records</h6>
                         <div class="col-12 text-end">
                           <ul class="nav justify-content-end">
                               <li class="nav-item dropdown pe-2 d-flex align-items-center">
                                   <a href="javascript:;" class="nav-link text-black p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="ni ni-bullet-list-67"></i>
+                                    <i class="ni ni-bullet-list-67" style="color: white"></i>
                                   </a>
                                   <ul class="dropdown-menu dropdown-menu-end px-2 py-3 ms-n4" aria-labelledby="dropdownMenuButton">
                                       <li class="mb-2">
@@ -623,8 +634,10 @@
                         <!-- Table content goes here -->
                       </tbody>
                     </table>
+                    
                   </div>
                 </div>
+                
               </div>
             </div>
           
@@ -667,7 +680,7 @@
                   
                     <div class="card">
                       <div class="card-header text-center bg-gradient2">
-                        <h5 class="card-title">Calculator</h5>
+                        <h5 class="card-title" style="color: white">Calculator</h5>
                       </div>
                       <div class="card-body calculator-body">
                         <input type="text" id="calculator-screen" class="form-control text-right mb-3" disabled>
@@ -772,7 +785,33 @@
   <!--   Core JS Files   -->
   
   <script>
+
+    // function to populate on user request of fields
+
+    function populateWithUserRows() {
+    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+
+    const userInfo = {
+        store_username: storedUserInfo.store_username,
+        store_name: storedUserInfo.store_name,
+        // Other user details
+    };
+
+    // Use 'prompt' instead of 'alert' to ask for user input
+    let numRowsInput = prompt("How many rows would you like to display?", "20");
+    let numOfRows = parseInt(numRowsInput, 10); // Convert the input to an integer
+
+    // Check if the input is a valid number
+    if (isNaN(numOfRows)) {
+        alert("Please enter a valid number. Displaying default 5 rows.");
+        numOfRows = 20; // Default to 5 rows if input is not a valid number
+    }
+
+    fetchAndPopulatePunchHistory(userInfo.store_username, numOfRows);
+}
     
+
+// default user info
     document.addEventListener('DOMContentLoaded', function () {
     // Retrieve user information from localStorage
     const storedUserInfo = localStorage.getItem("userInfo");

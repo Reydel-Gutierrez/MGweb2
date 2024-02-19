@@ -304,7 +304,7 @@
               <div class="row align-items-center">
                 <div class="col-12 col-md-6">
                   <form class="form-inline">
-                    <H4>Punch History</H4><div id="tableName"></div>
+                    <H4 style="color: white;" >Punch History</H4><div id="tableName" style="color: white;"></div>
                     
                   </form>
                   <hr>
@@ -378,6 +378,7 @@
             
             
               <div class="card-body px-0 pt-0 pb-2">
+                <button onclick="populateWithUserRows()" class="btn btn-light">Choose Rows to Display</button>
                 <div class="table-responsive p-0">
                   <table class="table align-items-center mb-0 punch-table">
                     <thead>
@@ -394,6 +395,7 @@
                       <!-- Table content goes here -->
                     </tbody>
                   </table>
+                  
                 </div>
               </div>
             </div>
@@ -516,7 +518,34 @@
   <!--   Core JS Files   -->
   
   <script>
-document.addEventListener('DOMContentLoaded', function () {
+
+    // function to populate on user request of fields
+
+    function populateWithUserRows() {
+    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+
+    const userInfo = {
+        store_username: storedUserInfo.store_username,
+        store_name: storedUserInfo.store_name,
+        // Other user details
+    };
+
+    // Use 'prompt' instead of 'alert' to ask for user input
+    let numRowsInput = prompt("How many rows would you like to display?", "20");
+    let numOfRows = parseInt(numRowsInput, 10); // Convert the input to an integer
+
+    // Check if the input is a valid number
+    if (isNaN(numOfRows)) {
+        alert("Please enter a valid number. Displaying default 5 rows.");
+        numOfRows = 20; // Default to 5 rows if input is not a valid number
+    }
+
+    fetchAndPopulatePunchHistory(userInfo.store_username, numOfRows);
+}
+
+    // default populate and get user information
+  document.addEventListener('DOMContentLoaded', function () {
+
   // Extract user information from the URL
   const urlParams = new URLSearchParams(window.location.search);
 
@@ -539,7 +568,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const tableNameElement = document.querySelector('#tableName');
   tableNameElement.textContent = userInfo.store_name;
-  fetchAndPopulatePunchHistory(userInfo.store_username);
+  fetchAndPopulatePunchHistory(userInfo.store_username, 20);
 });
 
 

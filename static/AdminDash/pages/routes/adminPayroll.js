@@ -15,15 +15,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({ username: username }),
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data && data.punches) {
-                    populateTable(data.fullname, data.punches);
+                    const first40Punches = data.punches.slice(0, 40);
+                    populateTable(data.fullname, first40Punches);
                 } else {
                     console.error('Punch data is missing');
                 }
@@ -34,60 +30,110 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function populateTable(fullname, punches) {
         punchTableBody.innerHTML = ''; // Clear the table body first
-    
-        let tempPunchIn = null;
-    
-        punches.forEach((punch, index) => {
-            if (punch.action === 'Clock In') {
-                if (tempPunchIn) {
-                    // Previous Clock In without Clock Out, add as unmatched
-                    addUnmatchedRow(tempPunchIn, fullname, 'In');
-                }
-                tempPunchIn = punch; // Store the current Clock In
-            } else if (punch.action === 'Clock Out') {
-                if (tempPunchIn) {
-                    // Calculate time difference for matched In and Out
-                    addMatchedRow(tempPunchIn, punch, fullname);
-                    tempPunchIn = null; // Reset after matching
-                } else {
-                    // Clock Out without a preceding Clock In, add as unmatched
-                    addUnmatchedRow(punch, fullname, 'Out');
-                }
+
+        for (let i = 0; i < punches.length; i += 2) {
+            const punchIn = punches[i + 1];
+            const punchOut = punches[i];
+            if (punchIn && punchOut && punchIn.action === "Clock In" && punchOut.action === "Clock Out") {
+                const row = document.createElement('tr');
+                addCell(row, fullname);
+                addCell(row, punchIn.date);
+                addCell(row, punchIn.time);
+                addCell(row, punchOut.time);
+                const hoursWorked = calculateHours(punchIn.time, punchOut.time);
+                addCell(row, hoursWorked.toFixed(2) + ' hours');
+                addCell(row, ''); // Placeholder for comments
+                punchTableBody.appendChild(row);
             }
-    
-            // After the last punch, check for an unmatched Clock In
-            if (index === punches.length - 1 && tempPunchIn) {
-                addUnmatchedRow(tempPunchIn, fullname, 'In');
-            }
-        });
+        }
     }
-    
+
     function addCell(row, text) {
         const cell = document.createElement('td');
         cell.textContent = text;
         row.appendChild(cell);
     }
-    
-    function addMatchedRow(punchIn, punchOut, fullname) {
-        const row = document.createElement('tr');
-        const diffHours = calculateHours(punchIn, punchOut);
-        [fullname, punchIn.date, punchIn.time, punchOut.time, `${diffHours.toFixed(2)} hours`, ''].forEach(text => addCell(row, text));
-        punchTableBody.appendChild(row);
-    }
-    
-    function addUnmatchedRow(punch, fullname, type) {
-        const row = document.createElement('tr');
-        const cells = type === 'In' ? [fullname, punch.date, punch.time, '---', '---', ''] : [fullname, punch.date, '---', punch.time, '---', ''];
-        cells.forEach(text => addCell(row, text));
-        punchTableBody.appendChild(row);
-    }
-    
-    function calculateHours(punchIn, punchOut) {
-        const inTime = new Date(punchIn.date + ' ' + punchIn.time);
-        const outTime = new Date(punchOut.date + ' ' + punchOut.time);
-        return (outTime - inTime) / (1000 * 60 * 60); // Convert milliseconds to hours
+
+    function calculateHours(timeIn, timeOut) {
+        const [hoursIn, minutesIn] = timeIn.split(':').map(parseFloat);
+        const [hoursOut, minutesOut] = timeOut.split(':').map(parseFloat);
+        const dateIn = new Date(0, 0, 0, hoursIn, minutesIn);
+        const dateOut = new Date(0, 0, 0, hoursOut, minutesOut);
+        const diff = dateOut - dateIn;
+        const hours = diff / 1000 / 60 / 60; // Convert milliseconds to hours
+        return hours;
     }
 });
+
+
+// fetch function but using cutom amount of rows
+let currentPage = 0;
+let rowsPerPage = 20;
+
+function fetchAndPopulatePunchHistory(username, userRowsPerPage) {
+    if(userRowsPerPage){
+        rowsPerPage = userRowsPerPage;
+    };
+
+    fetch('/employeePunchHistory', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: username }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.punches) {
+            // Calculate total pages
+            const totalPages = Math.ceil(data.punches.length / (rowsPerPage * 2));
+            populateTable(data.fullname, data.punches.slice(currentPage * rowsPerPage * 2, (currentPage + 1) * rowsPerPage * 2));
+
+            // Update button visibility
+        
+        } else {
+            console.error('Punch data is missing');
+        }
+    })
+    .catch(error => console.error('There has been a problem with your fetch operation:', error));
+}
+
+function populateTable(fullname, punches) {
+    punchTableBody.innerHTML = ''; // Clear the table body first
+
+    for (let i = 0; i < punches.length; i += 2) {
+        const punchIn = punches[i + 1];
+        const punchOut = punches[i];
+        if (punchIn && punchOut && punchIn.action === "Clock In" && punchOut.action === "Clock Out") {
+            const row = document.createElement('tr');
+            addCell(row, fullname);
+            addCell(row, punchIn.date);
+            addCell(row, punchIn.time);
+            addCell(row, punchOut.time);
+            const hoursWorked = calculateHours(punchIn.time, punchOut.time);
+            addCell(row, hoursWorked.toFixed(2) + ' hours');
+            addCell(row, ''); // Placeholder for comments
+            punchTableBody.appendChild(row);
+        }
+    }
+}
+
+function addCell(row, text) {
+    const cell = document.createElement('td');
+    cell.textContent = text;
+    row.appendChild(cell);
+}
+
+function calculateHours(timeIn, timeOut) {
+    const [hoursIn, minutesIn] = timeIn.split(':').map(parseFloat);
+    const [hoursOut, minutesOut] = timeOut.split(':').map(parseFloat);
+    const dateIn = new Date(0, 0, 0, hoursIn, minutesIn);
+    const dateOut = new Date(0, 0, 0, hoursOut, minutesOut);
+    const diff = dateOut - dateIn;
+    const hours = diff / 1000 / 60 / 60; // Convert milliseconds to hours
+    return hours;
+}
+// end of fetch function but using cutom amount of rows
 
 
 
@@ -222,33 +268,48 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(data => {
         const tableBody = document.getElementById('punchRequestTableBody');
         const requestCountTitle = document.getElementById('requestCountTitle');
-        
+
         // Update the title with the total number of requests
         requestCountTitle.textContent = `${data.length} Punch Requests to be Reviewed`;
 
         // Clear existing table rows
         tableBody.innerHTML = '';
 
+        // Helper function to format dates and times
+        const formatDate = (dateString) => {
+            if (!dateString) return 'N/A'; // Check for null or undefined
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
+        };
+
+        const formatTime = (dateString) => {
+            if (!dateString) return 'N/A'; // Check for null or undefined
+            const options = { hour: 'numeric', minute: '2-digit', hour12: true };
+            return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
+        };
+
+        const checkValue = (value) => value ? value : 'N/A'; // Function to check value
+
         // Iterate over each punch request and add rows to the table body
         data.forEach((request, index) => {
             const row = `<tr>
                 <th scope="row">${index + 1}</th>
-                <td>${request.fullName}</td>
-                <td>${request.originalDate}</td>
-                <td>${request.originalAction}</td>
-                <td>${request.originalTime}</td>
-                <td>${request.newDate}</td>
-                <td>${request.newAction}</td>
-                <td>${request.newTime}</td>
-                <td>${request.newComments}</td>
+                <td>${checkValue(request.fullName)}</td>
+                <td>${formatDate(request.originalDate)}</td>
+                <td>${request.originalAction === 1 ? 'Punch In' : request.originalAction === 0 ? 'Punch Out' : 'N/A'}</td>
+                <td>${formatTime(request.originalTime)}</td>
+                <td>${formatDate(request.newDate)}</td>
+                <td>${request.newAction === 1 ? 'Punch In' : request.newAction === 0 ? 'Punch Out' : 'N/A'}</td>
+                <td>${formatTime(request.newTime)}</td>
+                <td>${checkValue(request.newComments)}</td>
             </tr>`;
             tableBody.innerHTML += row;
         });
     })
     .catch(error => {
         console.error('Error fetching punch requests:', error);
-        // Optionally, implement error handling, e.g., show an error message on the UI
     });
 });
+
 
 

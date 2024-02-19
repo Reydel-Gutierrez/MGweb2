@@ -265,11 +265,28 @@ app.post('/employeePunching', async (req, res) => {
     // Attempt to find a document for the user
     let userPunch = await UserPunch.findOne({ username: username });
 
+    // Check the last punch action if user exists
     if (userPunch) {
-      // User exists, add a new punch to the punches array
-      userPunch.punches.push({ date, time, action });
+      const lastPunch = userPunch.punches[0]; // Get the most recent punch
+      if (lastPunch) {
+        // Prevent punching in if the last punch was also a punch in
+        if (action === 'Clock In' && lastPunch.action === 'Clock In') {
+          return res.status(400).json({ message: 'User is punched in already.' });
+        }
+        // Prevent punching out if the last punch was a punch out or if there are no punches
+        if (action === 'Clock Out' && (lastPunch.action === 'Clock Out' || userPunch.punches.length === 0)) {
+          return res.status(400).json({ message: 'User needs to punch in first.' });
+        }
+      }
+
+      // Add a new punch to the beginning of the punches array
+      userPunch.punches.unshift({ date, time, action });
     } else {
-      // No document for the user, create a new one
+      // If the first action is trying to punch out, inform the user to punch in first
+      if (action === 'Clock Out') {
+        return res.status(400).json({ message: 'User needs to punch in first.' });
+      }
+      // No document for the user, create a new one with the punch in
       userPunch = new UserPunch({
         username,
         fullname,
@@ -286,6 +303,7 @@ app.post('/employeePunching', async (req, res) => {
     res.status(500).json({ message: 'Error processing punch data', error: error });
   }
 });
+
 
 
 // Finding employee punch
