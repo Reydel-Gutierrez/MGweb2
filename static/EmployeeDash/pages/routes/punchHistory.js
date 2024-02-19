@@ -32,10 +32,30 @@ function fetchAndPopulatePunchHistory(username, userRowsPerPage) {
 
 function populateTable(fullname, punches) {
     punchTableBody.innerHTML = ''; // Clear the table body first
+    let startingIndex = 0;
 
-    for (let i = 0; i < punches.length; i += 2) {
+    if(punches[0].action == "Clock In"){
+        const row = document.createElement('tr');
+        addCell(row, fullname);
+        addCell(row, punches[0].date);
+        addCell(row, punches[0].time);
+        addCell(row, 'N/A');
+        addCell(row, 'N/A');
+        addCell(row, '___');
+        punchTableBody.appendChild(row);
+        const userPunchedInField = document.getElementById('userPunchedIn');
+        userPunchedInField.textContent = `${fullname} remains clocked in.`;
+        userPunchedInField.style.padding = '10px';
+
+        startingIndex++;
+    }
+
+    for (let i = startingIndex ; i < punches.length; i += 2) {
+
+
         const punchIn = punches[i + 1];
         const punchOut = punches[i];
+        
         if (punchIn && punchOut && punchIn.action === "Clock In" && punchOut.action === "Clock Out") {
             const row = document.createElement('tr');
             addCell(row, fullname);

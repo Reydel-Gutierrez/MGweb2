@@ -1,5 +1,1 @@
-Emplement back end for paymenet history
-
-
-
-Immplement Backend for Punch Request
+When user is clock in, neither user or admin can see users punches. Fix the logic

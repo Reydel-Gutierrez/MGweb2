@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (latestPunch) {
         punchInfoElement.textContent = `You ${latestPunch.action.toLowerCase()} on ${latestPunch.date} at ${latestPunch.time}`;
+        punchInfoElement.style.color = "green"; // Green text on success
       } else {
         punchInfoElement.textContent = "No punches recorded yet.";
       }
@@ -55,11 +56,18 @@ document.addEventListener('DOMContentLoaded', function() {
       errorResponse.json().then(error => {
         const punchInfoElement = document.getElementById('latestPunch');
         if (action === 'Clock In') {
-          punchInfoElement.textContent = "It appears you are already clocked in, Please clock Out.";
+          alert("Ops, Please Clock Out first.");
+          punchInfoElement.style.color = "#ff5b00";
+          punchInfoElement.textContent = "It appears you are already Clocked in, Please Clock Out.";
+          
+          
         } else if (action === 'Clock Out') {
+          alert("Ops, Please Clock In before Clock Out.");
           punchInfoElement.textContent = "Please Clock In before attempting to Clock Out.";
+          punchInfoElement.style.color = "#ff5b00";
         } else {
           punchInfoElement.textContent = "Failed to process punch action";
+          punchInfoElement.style.color = "red";
         }
       }).catch(() => {
         // Handle any other errors or if the error response couldn't be parsed
