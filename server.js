@@ -4,7 +4,7 @@ const path = require('path');
 const { User } = require('./db/db.js'); // Import User model from db.js
 
 const app = express();
-const PORT = 80;
+const PORT = 3000;
 
 app.use(bodyParser.json());
 
