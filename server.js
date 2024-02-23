@@ -10,6 +10,11 @@ const PORT = 3000;
 
 app.use(bodyParser.json());
 
+// Redirect from the root to /Web/home.html
+app.get('/', (req, res) => {
+  res.redirect('/Web/home.html');
+});
+
 app.use(express.static(path.join(__dirname, 'static')));
 app.use(cors());
 
