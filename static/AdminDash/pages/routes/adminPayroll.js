@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const username = usernameInput.value.trim();
 
         if (username) {
-            fetch('http://localhost:3000/employeePunchHistory', {
+            fetch('/employeePunchHistory', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
