@@ -6,7 +6,9 @@ const cors = require('cors');
 const { User } = require('./db/db.js'); // Import User model from db.js
 
 const app = express();
+const hostname = '34.125.4.72';
 const PORT = 3000;
+
 
 app.use(bodyParser.json());
 
@@ -416,10 +418,8 @@ app.get('/fetchPunchRequest', async (req, res) => {
   }
 });
 
-  //rendering home page
-
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  app.listen(PORT, hostname, () => {
+    console.log(`Server is running on http://${hostname}:${PORT}`);
   });
 
 
