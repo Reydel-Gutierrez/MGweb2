@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const password = document.querySelector('#passwordField').value;
   
       try {
-        const response = await fetch('http://mgbuildingservice:3000/loginEmployee', {
+        const response = await fetch('/loginEmployee', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
