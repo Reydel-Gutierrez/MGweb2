@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const password = document.querySelector('#passwordField').value;
   
       try {
-        const response = await fetch('http://localhost:3000/login', {
+        const response = await fetch('http://www.mgbuildingservice.com:3000/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
           
           localStorage.setItem('isLoggedIn', 'true');
         //   window.location.href = 'http://localhost:3000/AdminDash/pages/dashboard.html';
-          window.location.href = `http://localhost:3000/AdminDash/pages/dashboard.html?username=${data.username}&name=${data.name}`;
+          window.location.href = `http://www.mgbuildingservice.com:3000/AdminDash/pages/dashboard.html?username=${data.username}&name=${data.name}`;
         } else {
           // Login failed
           
