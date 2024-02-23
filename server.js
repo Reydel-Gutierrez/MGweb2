@@ -10,12 +10,14 @@ const PORT = 3000;
 
 app.use(bodyParser.json());
 
-// Redirect from the root to /Web/home.html
+// Serve static files first
+app.use(express.static(path.join(__dirname, 'static')));
+
+// Then handle the specific redirect
 app.get('/', (req, res) => {
   res.redirect('/Web/home.html');
 });
 
-app.use(express.static(path.join(__dirname, 'static')));
 app.use(cors());
 
 // Assuming you have a route to handle user registration
