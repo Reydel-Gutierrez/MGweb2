@@ -1,6 +1,8 @@
+const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const cors = require('cors');
 const { User } = require('./db/db.js'); // Import User model from db.js
 
 const app = express();
@@ -9,6 +11,7 @@ const PORT = 3000;
 app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'static')));
+app.use(cors());
 
 // Assuming you have a route to handle user registration
 app.post('/register', async (req, res) => {
