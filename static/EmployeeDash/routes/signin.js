@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
           // Login successful
           
           localStorage.setItem('isLoggedIn', 'true');
-        //   window.location.href = 'http://localhost:3000/AdminDash/pages/dashboard.html';
-          window.location.href = `http://www.mgbuildingservice.com:3000/EmployeeDash/pages/dashboard.html?username=${data.username}&name=${data.name}`;
+          window.location.href = `https://www.mgbuildingservice.com:3000/EmployeeDash/pages/dashboard.html?username=${data.username}&name=${data.name}`;
         } else {
           // Login failed
           alert("Invalid Credentials");

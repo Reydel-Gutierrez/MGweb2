@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Use fetch to send the data to the server
-            const response = await fetch('http://localhost:3000/employeeRegisterPay', {
+            const response = await fetch('/employeeRegisterPay', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

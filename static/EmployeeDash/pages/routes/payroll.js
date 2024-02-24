@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Username:', username); // Debugging line to ensure we capture the username
 
         if (username) {
-            fetch('http://mgbuildingservice:3000/employeePunchHistory', {
+            fetch('/employeePunchHistory', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
