@@ -19,6 +19,10 @@
   "homepage": "https://github.com/Reydel-Gutierrez/MGweb2#readme",
   "dependencies": {
     "body-parser": "^1.20.2",
+<<<<<<< HEAD
+=======
+    "corps": "^0.1.0",
+>>>>>>> a495d185b3228b3c52731bf3519d35c143ece23d
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "mongoose": "^8.1.0",

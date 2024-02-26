@@ -43,7 +43,7 @@
   <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-      <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/soft-ui-dashboard/pages/dashboard.html " target="_blank">
+      <a class="navbar-brand m-0" href=" https://www.mgbuildingservice.com/EmployeeDash/pages/dashboard.html" target="_blank">
         <img src="../img/logo/logoo.png" class="navbar-brand-img h-100" alt="main_logo">
         <span class="ms-1 font-weight-bold">MG Employee Dash</span>
       </a>
@@ -369,10 +369,11 @@
                         row.insertCell(0).textContent = pay.fullName;
                         row.insertCell(1).textContent = pay.payRate;
                         row.insertCell(2).textContent = pay.hours;
-                        row.insertCell(3).textContent = new Date(pay.fromDate).toLocaleDateString();
-                        row.insertCell(4).textContent = new Date(pay.toDate).toLocaleDateString();
+                        // Use manual date formatting for fromDate, toDate, and payDate
+                        row.insertCell(3).textContent = manualFormatDate(pay.fromDate);
+                        row.insertCell(4).textContent = manualFormatDate(pay.toDate);
                         row.insertCell(5).textContent = pay.amount;
-                        row.insertCell(6).textContent = new Date(pay.payDate).toLocaleDateString();
+                        row.insertCell(6).textContent = manualFormatDate(pay.payDate);
                         row.insertCell(7).textContent = pay.comments || 'N/A'; // Handle missing comments
                     });
                 })
@@ -382,6 +383,18 @@
                     payTableBody.innerHTML = '<tr><td colspan="8" class="text-center">Failed to load payment history</td></tr>';
                 });
             }
+
+            function manualFormatDate(isoString) {
+                // Extract the date part directly
+                const [datePart] = isoString.split('T');
+                // Split into components
+                const [year, month, day] = datePart.split('-');
+                // Format month as numeric and remove leading zeros
+                const monthNumeric = parseInt(month, 10);
+                // Combine components into the desired format
+                return `${monthNumeric}/${parseInt(day, 10)}/${year}`;
+            }
+
 
 
 
