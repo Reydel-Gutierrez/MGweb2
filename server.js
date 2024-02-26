@@ -1,14 +1,26 @@
+const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const cors = require('cors');
 const { User } = require('./db/db.js'); // Import User model from db.js
 
 const app = express();
+
 const PORT = 3000;
+
 
 app.use(bodyParser.json());
 
+// Serve static files first
 app.use(express.static(path.join(__dirname, 'static')));
+
+// Then handle the specific redirect
+app.get('/', (req, res) => {
+  res.redirect('/Web/home.html');
+});
+
+app.use(cors());
 
 // Assuming you have a route to handle user registration
 app.post('/register', async (req, res) => {
@@ -406,13 +418,8 @@ app.get('/fetchPunchRequest', async (req, res) => {
   }
 });
 
-  //rendering home page
-  app.get('/home', (req, res) => {
-    res.sendFile(path.join(__dirname, 'static', 'Web', 'home.html'));
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
   });
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
 
 

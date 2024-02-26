@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const password = document.querySelector('#passwordField').value;
   
       try {
-        const response = await fetch('http://localhost:3000/loginEmployee', {
+        const response = await fetch('/loginEmployee', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
           // Login successful
           
           localStorage.setItem('isLoggedIn', 'true');
-        //   window.location.href = 'http://localhost:3000/AdminDash/pages/dashboard.html';
-          window.location.href = `http://localhost:3000/EmployeeDash/pages/dashboard.html?username=${data.username}&name=${data.name}`;
+          window.location.href = `https://www.mgbuildingservice.com/EmployeeDash/pages/dashboard.html?username=${data.username}&name=${data.name}`;
         } else {
           // Login failed
           alert("Invalid Credentials");
