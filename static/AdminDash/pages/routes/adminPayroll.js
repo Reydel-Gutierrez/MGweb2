@@ -241,17 +241,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Iterate over payroll records and populate the table
         payrollRecords.forEach((record) => {
-            // Format the From Date and To Date using toLocaleDateString
-            const formattedFromDate = new Date(record.fromDate).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-            });
-            const formattedToDate = new Date(record.toDate).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-            });
+            // Manually format the From Date and To Date
+            const formattedFromDate = manualFormatDate(record.fromDate);
+            const formattedToDate = manualFormatDate(record.toDate);
 
             // Create a table row
             const row = document.createElement('tr');
@@ -272,6 +264,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error fetching payroll records:', error);
     }
 });
+
+function manualFormatDate(isoString) {
+    // Extract the date part directly
+    const [datePart] = isoString.split('T');
+    // Split into components
+    const [year, month, day] = datePart.split('-');
+    // Format month as short name
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthName = monthNames[parseInt(month, 10) - 1];
+    // Combine components into the desired format
+    return `${monthName} ${parseInt(day, 10)}, ${year}`;
+}
+
+
+
 
 
 

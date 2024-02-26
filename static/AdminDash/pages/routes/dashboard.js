@@ -180,12 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
       let pendingCount = 0;
   
       invoices.forEach((invoice) => {
-        // Format the date using toLocaleDateString
-        const formattedDate = new Date(invoice.date).toLocaleDateString('en-US', {
-          month: 'numeric',
-          day: 'numeric',
-          year: 'numeric',
-        });
+        // Manually format the date
+        const formattedDate = manualFormatDate(invoice.date);
   
         // Check if the invoice is pending
         const isPending = invoice.status === 'Unpaid';
@@ -215,7 +211,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error('Error fetching invoices:', error);
     }
-  });
+});
+
+function manualFormatDate(isoString) {
+    // Extract the date part directly
+    const [datePart] = isoString.split('T');
+    // Split into components
+    const [year, month, day] = datePart.split('-');
+    // Format month as numeric and remove leading zeros
+    const monthNumeric = parseInt(month, 10);
+    // Combine components into the desired format
+    return `${monthNumeric}/${parseInt(day, 10)}/${year}`;
+}
+
   
 
 
