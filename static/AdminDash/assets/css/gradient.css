@@ -1,14 +1,14 @@
 /* Informative */
 .bg-gradient1 {
-    background: linear-gradient(90deg,#141e30 0%, #243b55 100%);
+    background: linear-gradient(90deg,#09302B 0%, #09302B 100%);
   }
   
   /* Cool */
   .bg-gradient2 {
-    background: linear-gradient(90deg,#94260a 0%, #a14906 100%);
+    background: linear-gradient(90deg,#09302B 0%, #09302B 100%);
   }
   
   /* Tables */
   .bg-gradient3 {
-    background: linear-gradient(90deg, #141e30  0%, #141e30 100%); 
+    background: linear-gradient(90deg, #09302B  0%, #09302B 100%); 
   }

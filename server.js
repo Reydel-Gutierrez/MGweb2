@@ -390,23 +390,6 @@ app.post('/employeePayHistory', async (req, res) => {
 //Punch request submission route
 const { PunchRequest } = require('./db/db.js');
 
-// Route to handle change requests
-app.post('/changePunchRequest', async (req, res) => {
-  try {
-    // Create a new punch request using the data from the request body
-    const newPunchRequest = new PunchRequest(req.body);
-
-    // Save the new punch request to the database
-    await newPunchRequest.save();
-
-    // Respond back to the frontend with a success message
-    res.status(201).send({ message: 'Punch change request submitted successfully.' });
-  } catch (error) {
-    // Handle any errors that occur during the save operation
-    res.status(400).send({ message: 'Error submitting punch change request.', error: error.message });
-  }
-});
-
 // Route to fetch punch requests
 app.get('/fetchPunchRequest', async (req, res) => {
   try {
@@ -417,6 +400,65 @@ app.get('/fetchPunchRequest', async (req, res) => {
     res.status(500).send('Error fetching punch requests');
   }
 });
+
+// Comments
+const { Comments } = require('./db/db.js');
+// Route to handle change requests
+app.post('/newComment', async (req, res) => {
+  try {
+      const { fullName, comment } = req.body;
+
+      // Get the count of existing comments to determine the new ID
+      const count = await Comments.countDocuments() || 0;
+
+      // Create a new comment object with auto-generated fields
+      const newComment = new Comments({
+          id: count + 1, // Incrementing ID based on the existing count or starting from 1 if there are no existing documents
+          fullName,
+          comment,
+          status: 'Submitted', // Setting status to 'Submitted' by default
+          dateSubmitted: new Date().toLocaleDateString('en-US') // Formatting current date as "xx/xx/xxxx"
+      });
+
+      // Save the new comment to the database
+      await newComment.save();
+
+      res.status(201).json({ message: 'Comment created successfully' });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+// Route handler for fetching comments
+app.post('/updateComments', async (req, res) => {
+  try {
+      // Get the user's full name from the request body
+      const fullName = req.body.fullName;
+
+      // Lookup the user in the User schema to check admin status
+      const user = await User.findOne({ fullName });
+
+      // Fetch comments from the database
+      let comments;
+      if (user && user.admin) {
+          // If the user is an admin, return all comments
+          comments = await Comments.find({});
+      } else {
+          // If the user is not an admin, return only matching comments
+          comments = await Comments.find({ fullName });
+      }
+
+      // Send the comments as the response
+      res.json(comments);
+  } catch (error) {
+      console.error('Error fetching comments:', error);
+      // Send an error response
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on http://localhost:${PORT}`);
