@@ -648,7 +648,255 @@
           <!-- Right side col -->
     
           <div class="col-lg-4">
+
+            <div class="mb-4">
+              <div class="card h-100">
+                <div class="card-header pb-0 p-3 bg-gradient1 text-white">
+                  <div class="row">
+                    <div class="col-6 d-flex align-items-center">
+                        <h6 class="mb-0 " style="color: white;">Employee Comments</h6>
+                    </div>
+                    <!-- Drop Down menu-->
+                    <div class="col-6 text-end">
+                        <ul class="nav justify-content-end">
+                            <li class="nav-item dropdown pe-2 d-flex align-items-center">
+                                <a href="javascript:;" class="nav-link text-black p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <i class="ni ni-bullet-list-67" style="color: white;"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end px-2 py-3 ms-n4" aria-labelledby="dropdownMenuButton">
+                                    <li class="mb-2">
+                                        <button class="dropdown-item border-radius-md" data-bs-toggle="modal" data-bs-target="#addCommentModal">
+                                            Add New Comment
+                                        </button>
+                                    </li>
+                                    <li class="mb-2">
+                                        <button class="dropdown-item border-radius-md" data-bs-toggle="modal" data-bs-target="#deleteCommentModal">
+                                            Delete
+                                        </button>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <hr>
+                </div>
+
+                <!-- MODALS FORMS -->
+                  <!-- Create here -->
+            <!-- Change Request Modal -->
+            <!-- Modal -->
+              <div class="modal fade" id="addCommentModal" tabindex="-1" aria-labelledby="addCommentModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="addCommentModalLabel">Submit a Comment</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <!-- Form -->
+                              <form id="commentForm">
+
+                                  <!-- Comment field -->
+                                  <div class="mb-3">
+                                      <label for="comment" class="form-label">Comment</label>
+                                      <textarea class="form-control" id="comment" rows="3" placeholder="Enter your comment here" required></textarea>
+                                  </div>
+                              </form>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-primary" onclick="submitComment()">Submit</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <script>
+
+                // submit comment
+                function submitComment() {
+                    // Extract user information from the URL
+                    const urlParams = new URLSearchParams(window.location.search);
+
+                    // Try to load user information from local storage
+                    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+
+                    // Update with new values from the URL if available
+                    const userInfo = {
+                        store_username: urlParams.get('username') || storedUserInfo.store_username,
+                        store_name: urlParams.get('name') || storedUserInfo.store_name,
+                        // Other user details
+                    };
+
+                    // Save user information to local storage
+                    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+                    // Display user information on the dashboard
+                    const dashboardNameElement = document.querySelector('#dashboardName');
+                    dashboardNameElement.textContent = `Welcome, ${userInfo.store_name || ''}!`;
+
+                    // Get the user's full name for the comment
+                    const fullName = userInfo.store_name;
+
+                    // Get the comment text from the form
+                    const comment = document.getElementById('comment').value.trim();
+
+                    // Check if the comment is empty
+                    if (!comment) {
+                        alert('Please enter a comment before submitting.');
+                        return;
+                    }
+
+                    // Prepare the comment data
+                    const commentData = {
+                        fullName: fullName,
+                        comment: comment
+                    };
+
+                    // Send a POST request to the /newComment endpoint with the comment data
+                    fetch('/newComment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(commentData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                          // Handle successful response (e.g., show a success message)
+                          console.log('Comment submitted successfully:', data);
+                          // Show success message
+                          alert('Comment submitted successfully!');
+                          // Refresh the page
+                          location.reload();
+                      })
+                      .catch(error => {
+                          // Handle error (e.g., show an error message)
+                          console.error('There was an error submitting the comment:', error);
+                          // Optionally, you can display an error message or perform any other actions
+                      });
+                }
+
+              
+              </script>
+
+
+              <div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteCommentModalLabel">Delete Comment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label>Please enter the ID of the comment you would like to delete:</label>
+                            <input type="text" class="form-control" id="commentIdToDelete" placeholder="Comment ID" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
           
+             
+                </div>
+                
+                <div class="container my-2">
+                <div class="row">
+                  <div class="col-md-12 mx-auto">
+                  <div class="table-responsive">
+                      <table id="tasksTable" class="table mb-0">
+                          <thead class="table-light">
+                              <tr>
+                                  <th class="text-uppercase text-dark text-xxs font-weight-bolder">ID</th>
+                                  <th class="text-uppercase text-dark text-xxs font-weight-bolder">Name</th>
+                                  <th class="text-uppercase text-dark text-xxs font-weight-bolder">Comment</th>
+                                  <th class="text-uppercase text-dark text-xxs font-weight-bolder">Status</th>
+                                  <th class="text-uppercase text-dark text-xxs font-weight-bolder">Date Submitted</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <!-- Your dynamic data will go here --> 
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+              </div>
+            </div>
+              
+  
+
+                <script>
+                  // Function to fetch data for the table
+                  // Call fetchDataForTable() when the DOM is fully loaded
+                  document.addEventListener('DOMContentLoaded', function () {
+                    // Extract the user's full name from wherever you have stored it
+                    const userInfo = getUserData();
+                    const fullName = userInfo.store_name; // Assuming you have stored it in userInfo.store_name
+
+                    // Send a POST request to the server to fetch comments
+                    fetch('/updateComments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ fullName: fullName }), // Send the full name in the request body
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Call a function to populate the table with the received data
+                        console.log(data);
+                        populateTable(data);
+                    })
+                    .catch(error => {
+                        console.error('There was an error fetching data:', error);
+                        // Optionally, you can display an error message or perform any other actions
+                    });
+                });
+
+
+
+                  // Function to populate the table with the received data
+                  function populateTable(data) {
+                    alert("triggered");
+                      const tableBody = document.querySelector('#tasksTable tbody');
+
+                      // Clear existing table rows
+                      tableBody.innerHTML = '';
+
+                      // Loop through the data and create table rows
+                      data.forEach(item => {
+                          const row = document.createElement('tr');
+                          row.innerHTML = `
+                              <td>${item.id}</td>
+                              <td>${item.fullName}</td>
+                              <td>${item.comment}</td>
+                              <td>${item.status}</td>
+                              <td>${item.dateSubmitted}</td>
+                          `;
+                          tableBody.appendChild(row);
+                      });
+                  }
+
+                </script>
+          
+              </div>
+            </div>
+
+
+
     
                  <!-- Calendar Section: Half of the page width -->
                   <div class="card mb-4">
@@ -728,6 +976,7 @@
       </div>
 
     </div>
+
   </main>
   <div class="fixed-plugin">
     <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
@@ -826,6 +1075,26 @@
 
     }
   });
+
+  function getUserData(){
+   // Extract user information from the URL
+   const urlParams = new URLSearchParams(window.location.search);
+
+    // Try to load user information from local storage
+    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+
+    // Update with new values from the URL if available
+    const userInfo = {
+      store_username: urlParams.get('username') || storedUserInfo.store_username,
+      store_name: urlParams.get('name') || storedUserInfo.store_name,
+      // Other user details
+    };
+
+    // Save user information to local storage
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+    return userInfo;
+}
     
   </script>
 

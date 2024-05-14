@@ -90,6 +90,17 @@ const punchRequestSchema = new mongoose.Schema({
 
 const PunchRequest = mongoose.model('PunchRequest', punchRequestSchema);
 
+// Create schema for Comments
+const commentsSchema = new mongoose.Schema({
+  id: { type: String, required: true },
+  fullName: { type: String, required: true },
+  comment: { type: String, required: false },
+  status: { type: String, required: false },
+  dateSubmitted: { type: Date, required: true },
+});
+
+const Comments = mongoose.model('Comments', commentsSchema);
+
 module.exports = {
     db,
   User,
@@ -98,4 +109,5 @@ module.exports = {
   UserPunch,
   Payroll,
   PunchRequest,
+  Comments,
 };
