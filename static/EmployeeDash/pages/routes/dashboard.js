@@ -14,7 +14,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const dateTimeElement = document.getElementById('datetime');
     const date = dateTimeElement.querySelector('.card-title').textContent;
-    const time = dateTimeElement.querySelector('.card-text').textContent;
+    
+    // calc current time
+    // Create a new Date object to get the current time
+    const currentTime = new Date();
+    const hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes();
+
+    // Format the hours and minutes to ensure they are in 24-hour format and two digits
+    const formattedHours = hours < 10 ? `0${hours}` : hours;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+    // Construct the time string in 24-hour format
+    const time = `${formattedHours}:${formattedMinutes}`;
+
+
     const action = event.target.textContent.includes('In') ? 'Clock In' : 'Clock Out';
 
     const payload = {
