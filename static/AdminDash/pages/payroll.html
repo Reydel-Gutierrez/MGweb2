@@ -835,60 +835,64 @@
 
                 <script>
                   // Function to fetch data for the table
-                  // Call fetchDataForTable() when the DOM is fully loaded
                   document.addEventListener('DOMContentLoaded', function () {
-                    // Extract the user's full name from wherever you have stored it
-                    const userInfo = getUserData();
-                    const fullName = userInfo.store_name; // Assuming you have stored it in userInfo.store_name
+                      fetchDataAndPopulateTable();
+                  });
 
-                    // Send a POST request to the server to fetch comments
-                    fetch('/updateComments', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ fullName: fullName }), // Send the full name in the request body
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Call a function to populate the table with the received data
-                        console.log(data);
-                        populateTable(data);
-                    })
-                    .catch(error => {
-                        console.error('There was an error fetching data:', error);
-                        // Optionally, you can display an error message or perform any other actions
-                    });
-                });
+                  function fetchDataAndPopulateTable() {
+                      // Extract the user's full name from wherever you have stored it
+                      const userInfo = getUserData();
+                      const fullName = userInfo.store_name; // Assuming you have stored it in userInfo.store_name
 
+                      // Send a POST request to the server to fetch comments
+                      fetch('/updateComments', {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({ fullName: fullName }), // Send the full name in the request body
+                      })
+                      .then(response => {
+                          if (!response.ok) {
+                              throw new Error('Network response was not ok');
+                          }
+                          return response.json();
+                      })
+                      .then(data => {
+                          // Call a function to populate the table with the received data
+                          console.log('Data received:', data);
 
+                          // Check if data is an array
+                          if (!Array.isArray(data)) {
+                              console.error('Data is not an array');
+                              return; // Exit the function if data is not an array
+                          }
 
-                  // Function to populate the table with the received data
-                  function populateTable(data) {
-                    alert("triggered");
-                      const tableBody = document.querySelector('#tasksTable tbody');
+                          const tableBody = document.querySelector('#tasksTable tbody');
 
-                      // Clear existing table rows
-                      tableBody.innerHTML = '';
+                          // Clear existing table rows
+                          tableBody.innerHTML = '';
 
-                      // Loop through the data and create table rows
-                      data.forEach(item => {
-                          const row = document.createElement('tr');
-                          row.innerHTML = `
-                              <td>${item.id}</td>
-                              <td>${item.fullName}</td>
-                              <td>${item.comment}</td>
-                              <td>${item.status}</td>
-                              <td>${item.dateSubmitted}</td>
-                          `;
-                          tableBody.appendChild(row);
+                          // Loop through the data and create table rows
+                          data.forEach(item => {
+                              const row = document.createElement('tr');
+                              row.innerHTML = `
+                                  <td>${item.id}</td>
+                                  <td>${item.fullName}</td>
+                                  <td>${item.comment}</td>
+                                  <td>${item.status}</td>
+                                  <td>${item.dateSubmitted}</td>
+                              `;
+                              tableBody.appendChild(row);
+                          });
+                      })
+                      .catch(error => {
+                          console.error('There was an error fetching data:', error);
+                          // Optionally, you can display an error message or perform any other actions
                       });
                   }
+
+
 
                 </script>
           
