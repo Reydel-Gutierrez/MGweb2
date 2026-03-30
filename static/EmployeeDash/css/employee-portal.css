@@ -157,7 +157,7 @@
   letter-spacing: 0.04em;
 }
 
-.navbar-main .navbar-nav .nav-link.emp-logout {
+.mg-navbar-emp .emp-logout {
   cursor: pointer;
 }
 

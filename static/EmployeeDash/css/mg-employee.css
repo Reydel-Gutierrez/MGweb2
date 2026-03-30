@@ -29,6 +29,34 @@ body.mg-employee-app {
   }
 }
 
+/* Mobile: sidenav overlay (toggle wired in employee-nav.js after async sidebar load) */
+.mg-sidenav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.42);
+  z-index: 1020;
+  pointer-events: none;
+}
+
+@media (max-width: 1199.98px) {
+  .mg-sidenav-backdrop.mg-sidenav-backdrop--visible {
+    display: block;
+    pointer-events: auto;
+  }
+
+  #sidenav-main.sidenav {
+    z-index: 1030;
+  }
+
+  .mg-sidenav-open-btn {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
 /* Nav icons visible on white tiles (same fix as admin) */
 #sidenav-main .nav-link .icon-shape > i {
   color: #344767 !important;
@@ -98,6 +126,42 @@ body.mg-employee-app {
 
 #navbarBlur.mg-navbar-emp .breadcrumb {
   margin-bottom: 0.15rem;
+}
+
+/* One-row top bar: menu (mobile) | title | sign out — avoids floating hamburger in the middle */
+.mg-navbar-emp .emp-navbar-toolbar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.mg-navbar-emp .emp-navbar-titles {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mg-navbar-emp .emp-navbar-menu-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  padding: 0.4rem 0.45rem !important;
+  margin: 0;
+  line-height: 1;
+}
+
+.mg-navbar-emp .emp-navbar-actions .nav-link {
+  padding: 0.35rem 0 !important;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (min-width: 1200px) {
+  .mg-navbar-emp .emp-navbar-toolbar {
+    gap: 0;
+  }
 }
 
 /* Punch row: strict 50/50 columns */
