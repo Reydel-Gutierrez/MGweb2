@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Invoice log — MG Operations</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link rel="stylesheet" href="../css/mg-admin.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-admin-app">
+  <div id="mg-sidebar-root"></div>
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mg-navbar-clean">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="dashboard.html">Home</a></li>
+            <li class="breadcrumb-item text-sm text-dark active">Invoice log</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">Sent invoice log</h6>
+        </nav>
+        <div class="ms-md-auto d-flex align-items-center">
+          <span class="text-sm font-weight-bold" data-mg-user-name></span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+      <div id="mg-inv-alert" class="alert py-2 px-3 mb-3 d-none" role="alert"></div>
+
+      <div class="mg-page-hero">
+        <h1>Sent invoice register</h1>
+        <p>Record of invoices that have been sent from the <a href="invoice-workspace.html">invoice workspace</a>. Track payment status and balances. Use <strong>Edit</strong> on a row to update amounts or mark as paid. Drafts are not listed here.</p>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+          <div class="card mg-kpi-card h-100">
+            <div class="card-body p-3">
+              <p class="text-xs text-uppercase text-muted font-weight-bold mb-1">Unpaid count</p>
+              <h4 class="mb-0 text-danger" id="mg-inv-kpi-unpaid">—</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card mg-kpi-card h-100">
+            <div class="card-body p-3">
+              <p class="text-xs text-uppercase text-muted font-weight-bold mb-1">Paid count</p>
+              <h4 class="mb-0" id="mg-inv-kpi-paid">—</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card mg-kpi-card h-100">
+            <div class="card-body p-3">
+              <p class="text-xs text-uppercase text-muted font-weight-bold mb-1">Outstanding (unpaid $)</p>
+              <h4 class="mb-0" id="mg-inv-kpi-outstanding">—</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mg-toolbar">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <div class="input-group" style="min-width:240px; max-width:280px;">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input type="search" class="form-control" id="mg-inv-search" placeholder="Search title or number…">
+          </div>
+          <select class="form-select" id="mg-inv-status" style="max-width:160px;">
+            <option value="">All statuses</option>
+            <option value="Unpaid">Unpaid</option>
+            <option value="Paid">Paid</option>
+          </select>
+          <span class="text-sm text-muted" id="mg-inv-meta"></span>
+        </div>
+        <div>
+          <button class="btn btn-sm btn-outline-dark mb-0" type="button" data-bs-toggle="collapse" data-bs-target="#mg-inv-add">Add invoice</button>
+        </div>
+      </div>
+
+      <div id="mg-inv-skeleton" class="mg-skeleton mb-2" style="height:8px;display:none;"></div>
+
+      <div class="collapse mb-3" id="mg-inv-add">
+        <div class="card card-body">
+          <h6 class="text-sm font-weight-bold">New invoice</h6>
+          <div class="row g-2">
+            <div class="col-md-3"><label class="form-label text-xs">Date</label><input type="date" id="invoiceDate" class="form-control form-control-sm"></div>
+            <div class="col-md-3"><label class="form-label text-xs">Title</label><input type="text" id="invoiceTitle" class="form-control form-control-sm"></div>
+            <div class="col-md-2"><label class="form-label text-xs">Number</label><input type="text" id="invoiceNumber" class="form-control form-control-sm"></div>
+            <div class="col-md-2"><label class="form-label text-xs">Amount</label><input type="text" id="invoiceAmount" class="form-control form-control-sm"></div>
+            <div class="col-md-2"><label class="form-label text-xs">Status</label>
+              <select id="invoiceStatus" class="form-select form-select-sm"><option value="Unpaid">Unpaid</option><option value="Paid">Paid</option></select>
+            </div>
+          </div>
+          <button type="button" id="submitNewInvoice" class="btn btn-sm bg-gradient-dark mt-2 mb-0">Save invoice</button>
+        </div>
+      </div>
+
+      <div class="card mg-section-card">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+          <h6 class="mb-0">Invoice list <span class="text-muted font-weight-normal" id="mg-inv-total-label"></span></h6>
+          <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
+            <button type="button" class="btn btn-sm btn-outline-secondary mb-0" id="mg-inv-prev">Prev</button>
+            <span class="text-xs text-muted" id="mg-inv-page"></span>
+            <button type="button" class="btn btn-sm btn-outline-secondary mb-0" id="mg-inv-next">Next</button>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive mg-table-wrap">
+            <table class="table mg-data-table mb-0" id="mg-invoices-table">
+              <thead>
+                <tr>
+                  <th class="text-xs">Date</th>
+                  <th class="text-xs">Title</th>
+                  <th class="text-xs">Client</th>
+                  <th class="text-xs">Invoice #</th>
+                  <th class="text-xs">Amount</th>
+                  <th class="text-xs">Type</th>
+                  <th class="text-xs">Status</th>
+                  <th class="text-xs text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="mg-inv-edit-modal" tabindex="-1" aria-labelledby="mg-inv-edit-label" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="mg-inv-edit-label">Edit invoice</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-xs text-muted mb-3">Invoice number cannot be changed. To fix a wrong number, delete this invoice and create a new one.</p>
+            <div class="row g-2">
+              <div class="col-md-4">
+                <label class="form-label text-xs">Invoice #</label>
+                <input type="text" class="form-control form-control-sm bg-light" id="mg-inv-edit-number" readonly>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label text-xs">Date</label>
+                <input type="date" class="form-control form-control-sm" id="mg-inv-edit-date">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label text-xs">Amount</label>
+                <input type="text" class="form-control form-control-sm" id="mg-inv-edit-amount" placeholder="0.00">
+              </div>
+              <div class="col-12">
+                <label class="form-label text-xs">Title</label>
+                <input type="text" class="form-control form-control-sm" id="mg-inv-edit-title">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label text-xs">Payment status</label>
+                <select id="mg-inv-edit-status" class="form-select form-select-sm">
+                  <option value="Unpaid">Unpaid</option>
+                  <option value="Paid">Paid</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer d-flex flex-wrap justify-content-between gap-2">
+            <button type="button" class="btn btn-sm btn-outline-danger mb-0" id="mg-inv-edit-delete">Delete invoice</button>
+            <div class="ms-auto d-flex gap-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary mb-0" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-inv-edit-save">
+                <span class="mg-inv-save-label">Save changes</span>
+                <span class="mg-inv-save-spinner spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-shell.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      MgAdminShell.init({ page: 'invoices' });
+    });
+  </script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="routes/invoices-page.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+</body>
+</html>

@@ -3,12 +3,21 @@
   background: linear-gradient(90deg,#141e30 0%, #243b55 100%);
 }
 
-/* Cool */
+/* Cool — aligned with Admin Dashboard accent */
 .bg-gradient2 {
-  background: linear-gradient(90deg,#ff7e5f 0%, #feb47b 100%);
+  background: linear-gradient(90deg, #94260a 0%, #a14906 100%);
 }
 
 /* Tables */
 .bg-gradient3 {
   background: linear-gradient(90deg, #141e30  0%, #141e30 100%); 
+}
+
+/* MG Building Services — sidebar / header logo */
+.navbar-brand .mg-brand-logo,
+.mg-brand-logo {
+  max-height: 48px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
 }

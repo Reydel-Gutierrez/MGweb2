@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Requests — MG Operations</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link rel="stylesheet" href="../css/mg-admin.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-admin-app">
+  <div id="mg-sidebar-root"></div>
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mg-navbar-clean">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="dashboard.html">Home</a></li>
+            <li class="breadcrumb-item text-sm text-dark active">Requests</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">Punch change requests</h6>
+        </nav>
+        <div class="ms-md-auto d-flex align-items-center">
+          <span class="text-sm font-weight-bold" data-mg-user-name></span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+      <div class="mg-page-hero">
+        <h1>Corrections queue</h1>
+        <p>Employees submit punch corrections from the employee app. Review each entry, apply changes in your time records if needed, then remove items from this queue when finished.</p>
+      </div>
+
+      <div id="mg-req-alert" class="alert py-2 px-3 mb-3 d-none" role="alert"></div>
+
+      <div class="mg-toolbar mb-3">
+        <label class="text-sm text-muted me-2">View</label>
+        <select id="mg-req-filter" class="form-select form-select-sm d-inline-block" style="max-width:200px;">
+          <option value="pending" selected>Open queue only</option>
+          <option value="all">All requests</option>
+        </select>
+      </div>
+
+      <div id="mg-req-skeleton" class="mg-skeleton mb-2" style="height:8px;display:none;"></div>
+
+      <div class="card mg-section-card">
+        <div class="card-header bg-gradient2 text-white">
+          <h6 class="mb-0 text-white" id="requestCountTitle">Loading…</h6>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive mg-table-wrap">
+            <table class="table mg-data-table mb-0">
+              <thead>
+                <tr>
+                  <th class="text-xs">#</th>
+                  <th class="text-xs">Name</th>
+                  <th class="text-xs">Orig. date</th>
+                  <th class="text-xs">Orig. action</th>
+                  <th class="text-xs">Orig. time</th>
+                  <th class="text-xs">New date</th>
+                  <th class="text-xs">New action</th>
+                  <th class="text-xs">New time</th>
+                  <th class="text-xs">Comments</th>
+                  <th class="text-xs">Status</th>
+                  <th class="text-xs text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="punchRequestTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-shell.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      MgAdminShell.init({ page: 'requests' });
+    });
+  </script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="routes/requests-page.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+</body>
+</html>

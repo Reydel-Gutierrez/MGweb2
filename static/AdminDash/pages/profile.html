@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Profile — MG Operations</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link rel="stylesheet" href="../css/mg-admin.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-admin-app">
+  <div id="mg-sidebar-root"></div>
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mg-navbar-clean">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="dashboard.html">Home</a></li>
+            <li class="breadcrumb-item text-sm text-dark active">Profile</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">Profile &amp; settings</h6>
+        </nav>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+      <div class="mg-page-hero">
+        <h1>Your session</h1>
+        <p>Admin identity is stored in this browser for convenience. Sign out when using a shared computer.</p>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6 mb-4">
+          <div class="card mg-section-card h-100">
+            <div class="card-header"><h6>Account</h6></div>
+            <div class="card-body">
+              <p class="text-sm mb-1"><span class="text-muted">Name:</span> <strong data-mg-user-name></strong></p>
+              <p class="text-sm mb-3"><span class="text-muted">Username:</span> <strong id="mg-profile-username">—</strong></p>
+              <button type="button" class="btn btn-sm btn-outline-danger mb-0" id="mg-signout-btn">Sign out</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+          <div class="card mg-section-card h-100">
+            <div class="card-header"><h6>Shortcuts</h6></div>
+            <div class="card-body mg-link-list">
+              <a href="dashboard.html">Dashboard</a>
+              <a href="employees.html">Employees</a>
+              <a href="invoice-workspace.html">Invoice workspace</a>
+              <a href="invoices.html">Sent invoice log</a>
+              <a href="/home">Public website</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-shell.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      MgAdminShell.init({ page: 'profile' });
+      try {
+        var u = JSON.parse(localStorage.getItem('userInfo') || '{}');
+        var el = document.getElementById('mg-profile-username');
+        if (el && u.store_username) el.textContent = u.store_username;
+      } catch (e) {}
+      var btn = document.getElementById('mg-signout-btn');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          if (window.MgAdminAuth) window.MgAdminAuth.signOut();
+        });
+      }
+    });
+  </script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+</body>
+</html>

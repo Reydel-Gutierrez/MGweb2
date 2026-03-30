@@ -1,0 +1,114 @@
+/**
+ * MG Employee portal — same layout + table language as Admin (mg-admin.css patterns).
+ */
+
+:root {
+  --mg-emp-surface: #f4f6f9;
+  --mg-emp-border: #e2e8f0;
+  --mg-emp-heading: #1e293b;
+  --mg-emp-muted: #64748b;
+}
+
+body.mg-employee-app {
+  background-color: var(--mg-emp-surface) !important;
+}
+
+/* Sidebar: flush to viewport left (no ms-3 gap), full height feel */
+#sidenav-main.sidenav.mg-emp-sidenav {
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  border-radius: 0 0.75rem 0.75rem 0 !important;
+  min-height: 100vh;
+  box-shadow: 0 0 24px rgba(15, 23, 42, 0.06);
+}
+
+@media (max-width: 1199.98px) {
+  #sidenav-main.sidenav.mg-emp-sidenav {
+    border-radius: 0 0.75rem 0.75rem 0;
+  }
+}
+
+/* Nav icons visible on white tiles (same fix as admin) */
+#sidenav-main .nav-link .icon-shape > i {
+  color: #344767 !important;
+  opacity: 1 !important;
+  font-size: 0.8rem !important;
+}
+
+#sidenav-main .nav-link.active .icon-shape > i {
+  color: #fff !important;
+}
+
+.mg-section-card .card-header {
+  border-bottom: 1px solid var(--mg-emp-border);
+  padding: 0.85rem 1.1rem;
+  background: #fff;
+}
+
+.mg-section-card .card-header h6 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mg-emp-heading);
+  margin: 0;
+}
+
+.mg-table-wrap {
+  max-height: min(50vh, 360px);
+  overflow: auto;
+}
+
+.mg-table-wrap table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f8fafc;
+  box-shadow: 0 1px 0 var(--mg-emp-border);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700 !important;
+  color: #8392ab !important;
+  padding: 0.65rem 0.75rem !important;
+}
+
+.table.mg-data-table tbody td {
+  font-size: 0.8125rem;
+  vertical-align: middle;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.mg-empty-cell {
+  text-align: center;
+  padding: 1.25rem 1rem !important;
+  color: var(--mg-emp-muted);
+  font-size: 0.875rem;
+}
+
+#navbarBlur.mg-navbar-emp {
+  background: #fff !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06) !important;
+}
+
+#navbarBlur.mg-navbar-emp .breadcrumb {
+  margin-bottom: 0.15rem;
+}
+
+/* Punch row: strict 50/50 columns */
+.emp-punch-row .col-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
+@media (max-width: 575.98px) {
+  .emp-punch-row .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

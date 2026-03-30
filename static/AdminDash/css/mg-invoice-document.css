@@ -1,0 +1,239 @@
+/**
+ * MG invoice document — preview + html2pdf output
+ * Clean, print-oriented; navy accent bars similar to official MG invoices.
+ */
+
+.mg-invoice-doc {
+  --mg-inv-navy: #1e3a5f;
+  --mg-inv-navy-dark: #152a45;
+  --mg-inv-text: #1e293b;
+  --mg-inv-muted: #64748b;
+  --mg-inv-border: #e2e8f0;
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--mg-inv-text);
+  background: #fff;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 1.5rem;
+}
+
+.mg-invoice-doc__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--mg-inv-border);
+}
+
+.mg-invoice-doc__company-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--mg-inv-navy-dark);
+  margin: 0 0 0.35rem;
+}
+
+.mg-invoice-doc__company-lines {
+  margin: 0;
+  font-size: 10px;
+  color: var(--mg-inv-muted);
+  white-space: pre-line;
+}
+
+.mg-invoice-doc__logo {
+  max-height: 56px;
+  width: auto;
+  object-fit: contain;
+}
+
+.mg-invoice-doc__stripe {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, var(--mg-inv-navy-dark) 0%, var(--mg-inv-navy) 100%);
+  color: #fff;
+  padding: 0.55rem 1rem;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0 0 1rem;
+  border-radius: 2px;
+}
+
+.mg-invoice-doc__stripe--section {
+  margin-top: 1rem;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.45rem 1rem;
+}
+
+.mg-invoice-doc__stripe-date {
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+.mg-invoice-doc__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 576px) {
+  .mg-invoice-doc__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mg-invoice-doc__col-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--mg-inv-navy);
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+}
+
+.mg-invoice-doc__billto {
+  margin: 0;
+  font-size: 11px;
+  white-space: pre-wrap;
+  color: var(--mg-inv-text);
+}
+
+.mg-invoice-doc__details {
+  margin: 0;
+  font-size: 11px;
+  color: var(--mg-inv-text);
+}
+
+.mg-invoice-doc__details-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.mg-invoice-doc__bullets {
+  margin: 0 0 1rem;
+  padding-left: 1.15rem;
+  font-size: 10.5px;
+  color: #334155;
+}
+
+.mg-invoice-doc__bullets li {
+  margin-bottom: 0.35rem;
+}
+
+.mg-invoice-doc__table-wrap {
+  margin: 0 0 1rem;
+  border: 1px solid var(--mg-inv-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mg-invoice-doc__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10.5px;
+}
+
+.mg-invoice-doc__table thead th {
+  background: #f1f5f9;
+  color: var(--mg-inv-navy-dark);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 9px;
+  padding: 0.45rem 0.65rem;
+  border-bottom: 1px solid var(--mg-inv-border);
+  text-align: left;
+}
+
+.mg-invoice-doc__table thead th.mg-inv-num {
+  text-align: right;
+}
+
+.mg-invoice-doc__table tbody td {
+  padding: 0.5rem 0.65rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: top;
+}
+
+.mg-invoice-doc__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mg-invoice-doc__table .mg-inv-num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.mg-invoice-doc__totals {
+  margin-left: auto;
+  max-width: 280px;
+  font-size: 11px;
+}
+
+.mg-invoice-doc__totals-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.mg-invoice-doc__totals-row--grand {
+  font-weight: 800;
+  font-size: 12px;
+  padding-top: 0.65rem;
+  margin-top: 0.25rem;
+  border-top: 2px solid var(--mg-inv-navy);
+  border-bottom: none;
+  color: var(--mg-inv-navy-dark);
+}
+
+.mg-invoice-doc__notes {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--mg-inv-border);
+  font-size: 10px;
+  color: var(--mg-inv-muted);
+  white-space: pre-wrap;
+}
+
+.mg-invoice-doc__footer {
+  margin-top: 1.5rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--mg-inv-border);
+  font-size: 9px;
+  color: #94a3b8;
+  text-align: left;
+}
+
+/* Modal preview wrapper — light gray page behind doc */
+.mg-invoice-preview-wrap {
+  background: #e8edf3;
+}
+
+.mg-invoice-preview-wrap .mg-invoice-doc {
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+  padding: 1.5rem 1.75rem 2rem;
+  border-radius: 4px;
+}
+
+/* Off-screen PDF source — keep opacity 1 so html2canvas captures pixels */
+#mg-ie-pdf-export.mg-invoice-doc--export {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  width: 794px;
+  min-height: 200px;
+  z-index: 0;
+  overflow: visible;
+  padding: 0;
+  background: transparent;
+  pointer-events: none;
+}

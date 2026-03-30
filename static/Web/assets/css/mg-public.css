@@ -1,0 +1,291 @@
+/**
+ * MG public marketing site — corporate shell (complements Bootstrap 5)
+ */
+:root {
+  --mg-navy: #0b1b2b;
+  --mg-navy-mid: #122a42;
+  --mg-accent: #0d6efd;
+  --mg-accent-hover: #0b5ed7;
+  --mg-slate: #5c6c7d;
+  --mg-line: rgba(255, 255, 255, 0.12);
+  --mg-page-bg: #f4f6f8;
+  --mg-font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body.mg-public {
+  font-family: var(--mg-font);
+  color: #1a2332;
+  background: var(--mg-page-bg);
+  padding-top: 72px;
+}
+
+.mg-topbar {
+  background: linear-gradient(90deg, var(--mg-navy) 0%, var(--mg-navy-mid) 55%, #0f2840 100%);
+  box-shadow: 0 1px 0 var(--mg-line), 0 8px 24px rgba(0, 0, 0, 0.12);
+  min-height: 72px;
+}
+
+.mg-topbar .navbar-brand {
+  color: #fff !important;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-right: 0.75rem;
+}
+
+/* Lockup: icon + wordmark aligned on one baseline; logo sized to match bar height */
+.mg-brand-lockup {
+  gap: 0.65rem !important;
+}
+
+.mg-brand-logo {
+  display: block;
+  flex-shrink: 0;
+  height: 3.25rem; /* ~52px — balances next to wordmark in ~72px bar */
+  width: auto;
+  max-width: min(200px, 38vw);
+  object-fit: contain;
+  object-position: left center;
+}
+
+.mg-brand-wordmark {
+  font-size: 1rem;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+@media (min-width: 576px) {
+  .mg-brand-logo {
+    height: 3.5rem; /* ~56px on sm+ */
+    max-width: 220px;
+  }
+}
+
+.mg-footer .mg-brand-logo--footer {
+  height: 2.75rem;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+}
+
+.mg-topbar .mg-nav-link {
+  color: rgba(255, 255, 255, 0.88) !important;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.65rem !important;
+  border-radius: 0.35rem;
+}
+
+.mg-topbar .mg-nav-link:hover,
+.mg-topbar .mg-nav-link:focus {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mg-topbar .mg-nav-link.active {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.mg-topbar .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+.mg-topbar-inner {
+  max-width: 1320px;
+}
+
+.btn-mg-primary {
+  background: var(--mg-accent);
+  border-color: var(--mg-accent);
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.btn-mg-primary:hover {
+  background: var(--mg-accent-hover);
+  border-color: var(--mg-accent-hover);
+  color: #fff;
+}
+
+.btn-mg-outline {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #fff;
+  background: transparent;
+  font-weight: 600;
+}
+
+.btn-mg-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: #fff;
+}
+
+.mg-hero {
+  position: relative;
+  min-height: 72vh;
+  display: flex;
+  align-items: center;
+  background: var(--mg-navy);
+  color: #fff;
+  overflow: hidden;
+}
+
+.mg-hero__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.35;
+}
+
+.mg-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgba(11, 27, 43, 0.95) 0%, rgba(11, 27, 43, 0.75) 45%, rgba(15, 40, 64, 0.55) 100%);
+}
+
+.mg-hero .container {
+  position: relative;
+  z-index: 1;
+}
+
+.mg-hero h1 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  max-width: 18ch;
+}
+
+.mg-hero .lead {
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 42rem;
+  font-size: 1.15rem;
+}
+
+.mg-section {
+  padding: 4.5rem 0;
+}
+
+.mg-section--white {
+  background: #fff;
+}
+
+.mg-section-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--mg-navy);
+}
+
+.mg-section-kicker {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--mg-slate);
+}
+
+.mg-card-service {
+  background: #fff;
+  border: 1px solid #e8ecf1;
+  border-radius: 0.5rem;
+  padding: 1.75rem 1.5rem;
+  height: 100%;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.mg-card-service:hover {
+  box-shadow: 0 12px 40px rgba(11, 27, 43, 0.08);
+  border-color: #d7dee8;
+}
+
+.mg-card-service h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.mg-card-service p {
+  color: var(--mg-slate);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.mg-icon-round {
+  width: 44px;
+  height: 44px;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 110, 253, 0.1);
+  color: var(--mg-accent);
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.mg-trust-strip {
+  background: #fff;
+  border-top: 1px solid #e8ecf1;
+  border-bottom: 1px solid #e8ecf1;
+}
+
+.mg-trust-item {
+  padding: 1rem 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--mg-slate);
+}
+
+.mg-trust-item strong {
+  display: block;
+  color: var(--mg-navy);
+  font-weight: 600;
+}
+
+.mg-footer {
+  background: var(--mg-navy);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.mg-footer a {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+}
+
+.mg-footer a:hover {
+  color: #fff;
+}
+
+.mg-lead-form label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #2b3542;
+}
+
+.mg-lead-form .form-control,
+.mg-lead-form .form-select {
+  border-radius: 0.35rem;
+  border-color: #ced4da;
+}
+
+.mg-lead-form .form-control:focus,
+.mg-lead-form .form-select:focus {
+  border-color: var(--mg-accent);
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.mg-alert-inline {
+  border-radius: 0.35rem;
+}
+
+.page-hero-inner {
+  max-width: 720px;
+}
+
+@media (max-width: 991.98px) {
+  .mg-topbar .btn-mg-outline,
+  .mg-topbar .btn-mg-primary {
+    width: 100%;
+  }
+}

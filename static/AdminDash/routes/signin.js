@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const password = document.querySelector('#passwordField').value;
   
       try {
-        const response = await fetch('http://localhost:3000/login', {
+        const response = await fetch('/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -20,11 +20,20 @@ document.addEventListener('DOMContentLoaded', function () {
         const data = await response.json();
   
         if (response.ok) {
-          // Login successful
-          
           localStorage.setItem('isLoggedIn', 'true');
-        //   window.location.href = 'http://localhost:3000/AdminDash/pages/dashboard.html';
-          window.location.href = `http://localhost:3000/AdminDash/pages/dashboard.html?username=${data.username}&name=${data.name}`;
+          localStorage.setItem('mgPortal', 'admin');
+          localStorage.setItem(
+            'userInfo',
+            JSON.stringify({
+              store_username: data.username,
+              store_name: data.name || '',
+            })
+          );
+          window.location.href =
+            '/AdminDash/pages/dashboard.html?username=' +
+            encodeURIComponent(data.username) +
+            '&name=' +
+            encodeURIComponent(data.name);
         } else {
           // Login failed
           

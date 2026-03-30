@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const mongoose = require('mongoose');
 const { User } = require('./db/db.js'); // Import User model from db.js
 
 const app = express();
@@ -41,13 +42,18 @@ app.post('/login', async (req, res) => {
       const user = await User.findOne({ username });
   
       // Check if user exists and verify password
-      if (user && user.password === password && user.admin) {
-        res.json({ message: 'Login successful', username: user.username, name: user.fullName });
-
-      } else if (user && user.password === password){
-        res.status(401).json({ message: 'This user is no an Admin' });
-      } else {
+      if (!user || user.password !== password) {
         res.status(401).json({ message: 'Invalid credentials' });
+      } else if (user.active === false) {
+        res.status(403).json({ message: 'This account is deactivated' });
+      } else if (user.admin) {
+        res.json({ message: 'Login successful', username: user.username, name: user.fullName });
+      } else {
+        res.status(403).json({
+          message:
+            'This account is not enabled for the administrator portal. Use the employee sign-in for time clock and pay.',
+          reason: 'NOT_ADMIN',
+        });
       }
     } catch (error) {
       console.error(error);
@@ -64,10 +70,19 @@ app.post('/login', async (req, res) => {
       const user = await User.findOne({ username });
   
       // Check if user exists and verify password
-      if (user && user.password === password) {
-        res.json({ message: 'Login successful', username: user.username, name: user.fullName });
-      }  else {
+      if (!user || user.password !== password) {
         res.status(401).json({ message: 'Invalid credentials' });
+      } else if (user.active === false) {
+        res.status(403).json({ message: 'This account is deactivated' });
+      } else {
+        res.json({
+          message: 'Login successful',
+          username: user.username,
+          name: user.fullName,
+          email: user.email,
+          idNumber: user.idNumber,
+          payRate: user.payRate || '',
+        });
       }
     } catch (error) {
       console.error(error);
@@ -75,15 +90,119 @@ app.post('/login', async (req, res) => {
     }
   });
 
+/** Employee portal: profile (no password) */
+app.post('/employeeProfile', async (req, res) => {
+  try {
+    const { username } = req.body || {};
+    if (!username) {
+      return res.status(400).json({ message: 'username required' });
+    }
+    const user = await User.findOne({ username }).lean();
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({
+      fullName: user.fullName,
+      username: user.username,
+      email: user.email,
+      idNumber: user.idNumber,
+      payRate: user.payRate || '',
+      active: user.active !== false,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 // New route to fetch user data for the table
 app.get('/users', async (req, res) => {
   try {
-    // Fetch all users from the database, excluding sensitive fields
-    const users = await User.find({}, { __v: 0 });
-
+    const users = await User.find({}, { password: 0, __v: 0 }).lean();
     res.json(users);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Update employee (admin)
+app.patch('/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid user id' });
+    }
+    const {
+      fullName,
+      email,
+      username,
+      payRate,
+      admin,
+      idNumber,
+      password,
+      active,
+    } = req.body;
+
+    const current = await User.findById(id);
+    if (!current) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const updates = {};
+    if (fullName !== undefined) updates.fullName = String(fullName).trim();
+    if (email !== undefined) updates.email = String(email).trim();
+    if (username !== undefined) updates.username = String(username).trim();
+    if (payRate !== undefined) updates.payRate = String(payRate).trim();
+    if (admin !== undefined) updates.admin = Boolean(admin);
+    if (idNumber !== undefined) updates.idNumber = String(idNumber).trim();
+    if (active !== undefined) updates.active = Boolean(active);
+    if (password !== undefined && String(password).length > 0) {
+      updates.password = String(password);
+    }
+
+    if (updates.email) {
+      const taken = await User.findOne({
+        email: updates.email,
+        _id: { $ne: id },
+      });
+      if (taken) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+    }
+    if (updates.username) {
+      const taken = await User.findOne({
+        username: updates.username,
+        _id: { $ne: id },
+      });
+      if (taken) {
+        return res.status(400).json({ message: 'Username already in use' });
+      }
+    }
+    if (updates.idNumber) {
+      const taken = await User.findOne({
+        idNumber: updates.idNumber,
+        _id: { $ne: id },
+      });
+      if (taken) {
+        return res.status(400).json({ message: 'Employee ID already in use' });
+      }
+    }
+
+    const updated = await User.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    )
+      .select('-password')
+      .lean();
+
+    res.json({ message: 'User updated', data: updated });
+  } catch (error) {
+    console.error(error);
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Duplicate email or username' });
+    }
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
@@ -107,26 +226,87 @@ app.post('/deleteEmployee', async (req, res) => {
   }
 });
 
-const { Invoice } = require('./db/db.js');
+const { Invoice, InvoiceTemplate } = require('./db/db.js');
 
-// POST route to create a new invoice
+const sentInvoiceFilter = {
+  $or: [{ record_status: { $ne: 'draft' } }, { record_status: { $exists: false } }],
+};
 
-// POST route to create a new invoice
+function computeInvoiceTotals(lineItems, taxRatePercent) {
+  const items = Array.isArray(lineItems) ? lineItems : [];
+  let subtotal = 0;
+  items.forEach((row) => {
+    const q = Number(row.quantity) || 0;
+    const u = Number(row.unit_price) || 0;
+    subtotal += q * u;
+  });
+  const rate = Number(taxRatePercent) || 0;
+  const tax = subtotal * (rate / 100);
+  return {
+    subtotal: Math.round(subtotal * 100) / 100,
+    tax_amount: Math.round(tax * 100) / 100,
+    amount: Math.round((subtotal + tax) * 100) / 100,
+  };
+}
+
+// POST — legacy + workspace: record_status defaults to sent for old clients
 app.post('/submitInvoice', async (req, res) => {
   try {
-    // Handle form fields
-    const { date, invoice_title, invoice_number, amount, status } = req.body;
-
-    // Create a new invoice instance
-    const newInvoice = new Invoice({
+    const {
       date,
       invoice_title,
       invoice_number,
       amount,
       status,
+      record_status,
+      due_date,
+      client_name,
+      bill_to,
+      service_address,
+      service_description,
+      line_items,
+      subtotal,
+      tax_rate_percent,
+      tax_amount,
+      notes,
+      template_type,
+    } = req.body;
+
+    const rs = record_status === 'draft' ? 'draft' : 'sent';
+    let amt = Number(amount);
+    let sub = subtotal != null ? Number(subtotal) : undefined;
+    let taxAmt = tax_amount != null ? Number(tax_amount) : undefined;
+    if (line_items && Array.isArray(line_items) && line_items.length) {
+      const t = computeInvoiceTotals(line_items, tax_rate_percent);
+      sub = t.subtotal;
+      taxAmt = t.tax_amount;
+      amt = t.amount;
+    }
+    if (Number.isNaN(amt)) {
+      return res.status(400).json({ error: 'Invalid amount' });
+    }
+
+    const newInvoice = new Invoice({
+      date,
+      invoice_title,
+      invoice_number,
+      amount: amt,
+      status: status || 'Unpaid',
+      record_status: rs,
+      due_date: due_date ? new Date(due_date) : undefined,
+      client_name,
+      bill_to,
+      service_address,
+      service_description,
+      line_items,
+      subtotal: sub,
+      tax_rate_percent: tax_rate_percent != null ? Number(tax_rate_percent) : undefined,
+      tax_amount: taxAmt,
+      notes,
+      template_type,
+      sent_at: rs === 'sent' ? new Date() : undefined,
     });
 
-    // Save the new invoice to the database
     await newInvoice.save();
 
     res.status(201).json({ message: 'Invoice created successfully', data: newInvoice });
@@ -136,17 +316,141 @@ app.post('/submitInvoice', async (req, res) => {
   }
 });
 
+/** Create draft from workspace (auto invoice # if omitted) */
+app.post('/invoice-workspace', async (req, res) => {
+  try {
+    const body = req.body || {};
+    let invoice_number = body.invoice_number && String(body.invoice_number).trim();
+    if (!invoice_number) {
+      invoice_number = `DRAFT-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+    }
+    const taken = await Invoice.findOne({ invoice_number });
+    if (taken) {
+      return res.status(400).json({ error: 'Invoice number already in use' });
+    }
+    const date = body.date ? new Date(body.date) : new Date();
+    const line_items = Array.isArray(body.line_items) ? body.line_items : [];
+    const tax_rate_percent = body.tax_rate_percent != null ? Number(body.tax_rate_percent) : 0;
+    const t = computeInvoiceTotals(line_items, tax_rate_percent);
+    const doc = new Invoice({
+      date,
+      invoice_title: String(body.invoice_title || 'Untitled invoice').trim(),
+      invoice_number,
+      amount: t.amount,
+      status: 'Unpaid',
+      record_status: 'draft',
+      due_date: body.due_date ? new Date(body.due_date) : undefined,
+      client_name: body.client_name,
+      bill_to: body.bill_to,
+      service_address: body.service_address,
+      service_description: body.service_description,
+      line_items,
+      subtotal: t.subtotal,
+      tax_rate_percent,
+      tax_amount: t.tax_amount,
+      notes: body.notes,
+      template_type: body.template_type,
+    });
+    await doc.save();
+    res.status(201).json({ message: 'Draft created', data: doc });
+  } catch (error) {
+    console.error('Error creating workspace draft:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
-//load invoices table
+// Sent invoices only — invoice log / history
 app.get('/fetchInvoices', async (req, res) => {
   try {
-    // Fetch all invoices from the database
-    const invoices = await Invoice.find({}, { _id: 0, __v: 0 }).lean();
-
+    const invoices = await Invoice.find(sentInvoiceFilter, { _id: 0, __v: 0 }).lean();
     res.json(invoices);
   } catch (error) {
     console.error('Error fetching invoices:', error);
     res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.get('/fetchInvoiceDrafts', async (req, res) => {
+  try {
+    const drafts = await Invoice.find({ record_status: 'draft' }, { _id: 0, __v: 0 })
+      .sort({ updatedAt: -1 })
+      .lean();
+    res.json(drafts);
+  } catch (error) {
+    console.error('Error fetching invoice drafts:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.get('/invoice/:invoiceNumber', async (req, res) => {
+  try {
+    const inv = await Invoice.findOne(
+      { invoice_number: req.params.invoiceNumber },
+      { _id: 0, __v: 0 }
+    ).lean();
+    if (!inv) {
+      return res.status(404).json({ error: 'Invoice not found' });
+    }
+    res.json(inv);
+  } catch (error) {
+    console.error('Error fetching invoice:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/invoiceTemplates', async (req, res) => {
+  try {
+    const list = await InvoiceTemplate.find({}, { _id: 0, __v: 0 }).sort({ name: 1 }).lean();
+    res.json(list);
+  } catch (error) {
+    console.error('Error fetching invoice templates:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/invoice/:invoiceNumber/send', async (req, res) => {
+  try {
+    const { invoiceNumber } = req.params;
+    const existing = await Invoice.findOne({ invoice_number: invoiceNumber });
+    if (!existing) {
+      return res.status(404).json({ error: 'Invoice not found' });
+    }
+    if (existing.record_status !== 'draft') {
+      return res.status(400).json({ error: 'Only drafts can be sent' });
+    }
+    const num = String(existing.invoice_number || '');
+    if (num.startsWith('DRAFT-')) {
+      return res.status(400).json({
+        error: 'Set a final invoice number before sending (replace the draft placeholder).',
+      });
+    }
+    const line_items = existing.line_items && existing.line_items.length
+      ? existing.line_items
+      : req.body.line_items;
+    const tax_rate_percent = existing.tax_rate_percent != null
+      ? existing.tax_rate_percent
+      : req.body.tax_rate_percent;
+    const t = computeInvoiceTotals(line_items, tax_rate_percent);
+    const updated = await Invoice.findOneAndUpdate(
+      { invoice_number: invoiceNumber },
+      {
+        $set: {
+          record_status: 'sent',
+          sent_at: new Date(),
+          status: 'Unpaid',
+          amount: t.amount,
+          subtotal: t.subtotal,
+          tax_amount: t.tax_amount,
+          line_items,
+          tax_rate_percent: tax_rate_percent != null ? Number(tax_rate_percent) : undefined,
+        },
+      },
+      { new: true, runValidators: true }
+    ).lean();
+    res.json({ message: 'Invoice sent', data: updated });
+  } catch (error) {
+    console.error('Error sending invoice:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
@@ -194,6 +498,96 @@ app.patch('/updateInvoiceStatus/:invoiceNumber', async (req, res) => {
   }
 });
 
+// Full invoice update — sent: limited fields; draft: full workspace payload
+app.patch('/invoice/:invoiceNumber', async (req, res) => {
+  try {
+    const { invoiceNumber } = req.params;
+    const existing = await Invoice.findOne({ invoice_number: invoiceNumber });
+    if (!existing) {
+      return res.status(404).json({ error: 'Invoice not found' });
+    }
+    const isDraft = existing.record_status === 'draft';
+
+    if (!isDraft) {
+      const { date, invoice_title, amount, status } = req.body;
+      const set = {};
+      if (date !== undefined) set.date = new Date(date);
+      if (invoice_title !== undefined) set.invoice_title = String(invoice_title).trim();
+      if (amount !== undefined) set.amount = Number(amount);
+      if (status !== undefined) {
+        if (!['Paid', 'Unpaid'].includes(status)) {
+          return res.status(400).json({ error: 'Status must be Paid or Unpaid' });
+        }
+        set.status = status;
+      }
+      if (Object.keys(set).length === 0) {
+        return res.status(400).json({ error: 'No fields to update' });
+      }
+      const updated = await Invoice.findOneAndUpdate(
+        { invoice_number: invoiceNumber },
+        { $set: set },
+        { new: true, runValidators: true }
+      ).lean();
+      return res.json({ message: 'Invoice updated', data: updated });
+    }
+
+    const body = req.body || {};
+    const newNum =
+      body.invoice_number !== undefined ? String(body.invoice_number).trim() : invoiceNumber;
+    if (newNum !== invoiceNumber) {
+      const taken = await Invoice.findOne({ invoice_number: newNum });
+      if (taken) {
+        return res.status(400).json({ error: 'Invoice number already in use' });
+      }
+    }
+
+    const line_items = body.line_items !== undefined ? body.line_items : existing.line_items;
+    const tax_rate_percent =
+      body.tax_rate_percent !== undefined ? Number(body.tax_rate_percent) : existing.tax_rate_percent;
+    const t = computeInvoiceTotals(line_items, tax_rate_percent);
+
+    const set = {
+      invoice_number: newNum,
+      date: body.date !== undefined ? new Date(body.date) : existing.date,
+      invoice_title:
+        body.invoice_title !== undefined
+          ? String(body.invoice_title).trim()
+          : existing.invoice_title,
+      due_date:
+        body.due_date !== undefined
+          ? body.due_date
+            ? new Date(body.due_date)
+            : null
+          : existing.due_date,
+      client_name: body.client_name !== undefined ? body.client_name : existing.client_name,
+      bill_to: body.bill_to !== undefined ? body.bill_to : existing.bill_to,
+      service_address:
+        body.service_address !== undefined ? body.service_address : existing.service_address,
+      service_description:
+        body.service_description !== undefined
+          ? body.service_description
+          : existing.service_description,
+      line_items,
+      subtotal: t.subtotal,
+      tax_rate_percent: tax_rate_percent != null ? tax_rate_percent : undefined,
+      tax_amount: t.tax_amount,
+      amount: t.amount,
+      notes: body.notes !== undefined ? body.notes : existing.notes,
+      template_type: body.template_type !== undefined ? body.template_type : existing.template_type,
+    };
+
+    const updated = await Invoice.findOneAndUpdate(
+      { invoice_number: invoiceNumber },
+      { $set: set },
+      { new: true, runValidators: true }
+    ).lean();
+    return res.json({ message: 'Draft updated', data: updated });
+  } catch (error) {
+    console.error('Error updating invoice:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 const { Task } = require('./db/db.js');
 
@@ -207,7 +601,7 @@ app.post('/addTask', async (req, res) => {
 
     // Create a new task instance
     const newTask = new Task({
-      id: taskCount + 1,
+      id: String(taskCount + 1),
       title: taskTitle,
       date: taskDate,
     });
@@ -233,13 +627,47 @@ app.get('/fetchTasks', async (req, res) => {
   }
 });
 
+// Update task
+app.patch('/updateTask', async (req, res) => {
+  try {
+    const { taskId, taskTitle, taskDate } = req.body;
+    if (!taskId || taskTitle === undefined || !taskDate) {
+      return res.status(400).json({ error: 'taskId, taskTitle, and taskDate are required' });
+    }
+    const sid = String(taskId);
+    const numId = Number(taskId);
+    const idQuery =
+      !Number.isNaN(numId) && String(numId) === sid
+        ? { $or: [{ id: sid }, { id: numId }] }
+        : { id: sid };
+    const updated = await Task.findOneAndUpdate(
+      idQuery,
+      { title: String(taskTitle).trim(), date: new Date(taskDate) },
+      { new: true, runValidators: true }
+    );
+    if (!updated) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    res.json({ message: 'Task updated', data: updated });
+  } catch (error) {
+    console.error('Error updating task:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Delete task endpoint
 app.post('/deleteTask', async (req, res) => {
   try {
     const { taskId } = req.body;
 
     // Find and delete the task by custom ID
-    const deletedTask = await Task.findOneAndDelete({ id: taskId });
+    const sid = String(taskId);
+    const numId = Number(taskId);
+    const idQuery =
+      !Number.isNaN(numId) && String(numId) === sid
+        ? { $or: [{ id: sid }, { id: numId }] }
+        : { id: sid };
+    const deletedTask = await Task.findOneAndDelete(idQuery);
     
     if (!deletedTask) {
       return res.status(404).json({ error: 'Task not found' });
@@ -354,6 +782,63 @@ app.get('/fetchPayrollRecords', async (req, res) => {
   }
 });
 
+app.patch('/payroll/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid payroll id' });
+    }
+    const {
+      fullName,
+      payRate,
+      hours,
+      fromDate,
+      toDate,
+      amount,
+      payDate,
+      comments,
+    } = req.body;
+    const set = {};
+    if (fullName !== undefined) set.fullName = String(fullName).trim();
+    if (payRate !== undefined) set.payRate = Number(payRate);
+    if (hours !== undefined) set.hours = Number(hours);
+    if (fromDate !== undefined) set.fromDate = new Date(fromDate);
+    if (toDate !== undefined) set.toDate = new Date(toDate);
+    if (amount !== undefined) set.amount = Number(amount);
+    if (payDate !== undefined) set.payDate = new Date(payDate);
+    if (comments !== undefined) set.comments = comments;
+    const updated = await Payroll.findByIdAndUpdate(
+      id,
+      { $set: set },
+      { new: true, runValidators: true }
+    ).lean();
+    if (!updated) {
+      return res.status(404).json({ message: 'Payroll record not found' });
+    }
+    res.json({ message: 'Payroll updated', data: updated });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/payroll/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid payroll id' });
+    }
+    const deleted = await Payroll.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Payroll record not found' });
+    }
+    res.json({ message: 'Payroll record deleted', data: deleted });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // fetch employee pay record as employee request
 app.post('/employeePayHistory', async (req, res) => {
   const { fullName } = req.body;
@@ -363,10 +848,9 @@ app.post('/employeePayHistory', async (req, res) => {
     const userPays = await Payroll.find({ fullName: fullName });
 
     if (!userPays || userPays.length === 0) {
-      return res.status(404).send('User not found');
+      return res.json([]);
     }
 
-    // Send back all matching pay records
     res.json(userPays);
   } catch (error) {
     console.error('Error fetching user pay records:', error);
@@ -375,8 +859,8 @@ app.post('/employeePayHistory', async (req, res) => {
 });
 
 
-//Punch request submission route
-const { PunchRequest } = require('./db/db.js');
+// Punch request submission + public lead intake
+const { PunchRequest, Lead } = require('./db/db.js');
 
 // Route to handle change requests
 app.post('/changePunchRequest', async (req, res) => {
@@ -395,24 +879,300 @@ app.post('/changePunchRequest', async (req, res) => {
   }
 });
 
-// Route to fetch punch requests
+/** Employee: punch correction requests for this user only (by username) */
+app.post('/employeePunchRequests', async (req, res) => {
+  try {
+    const { username } = req.body || {};
+    if (!username) {
+      return res.status(400).json({ message: 'username required' });
+    }
+    const user = await User.findOne({ username }).lean();
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const punchRequests = await PunchRequest.find({ fullName: user.fullName })
+      .sort({ _id: -1 })
+      .lean();
+    res.json(punchRequests);
+  } catch (error) {
+    console.error('Error fetching employee punch requests:', error);
+    res.status(500).json({ message: 'Error fetching punch requests' });
+  }
+});
+
+// Route to fetch punch requests (?pendingOnly=1 shows only open queue)
 app.get('/fetchPunchRequest', async (req, res) => {
   try {
-    const punchRequests = await PunchRequest.find(); // Fetch all punch requests
-    res.status(200).json(punchRequests); // Send punch requests as JSON
+    const pendingOnly = req.query.pendingOnly === '1' || req.query.pendingOnly === 'true';
+    const query = pendingOnly
+      ? {
+          $or: [
+            { status: 'pending' },
+            { status: { $exists: false } },
+          ],
+        }
+      : {};
+    const punchRequests = await PunchRequest.find(query).sort({ _id: -1 });
+    res.status(200).json(punchRequests);
   } catch (error) {
     console.error('Error fetching punch requests:', error);
     res.status(500).send('Error fetching punch requests');
   }
 });
 
-  //rendering home page
-  app.get('/home', (req, res) => {
-    res.sendFile(path.join(__dirname, 'static', 'Web', 'home.html'));
-  });
+app.patch('/punchRequest/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid request id' });
+    }
+    const { status } = req.body;
+    if (!['approved', 'rejected', 'pending'].includes(status)) {
+      return res.status(400).json({ error: 'status must be approved, rejected, or pending' });
+    }
+    const updated = await PunchRequest.findByIdAndUpdate(
+      id,
+      { $set: { status } },
+      { new: true }
+    );
+    if (!updated) {
+      return res.status(404).json({ error: 'Request not found' });
+    }
+    res.json({ message: 'Request updated', data: updated });
+  } catch (error) {
+    console.error('Error updating punch request:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
-app.listen(PORT, () => {
+// Remove a punch change request from the queue (admin workflow)
+app.delete('/punchRequest/:id', async (req, res) => {
+  try {
+    const deleted = await PunchRequest.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Request not found' });
+    }
+    res.json({ message: 'Request removed' });
+  } catch (error) {
+    console.error('Error deleting punch request:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+function trimField(v, maxLen) {
+  if (v == null) return '';
+  return String(v).trim().slice(0, maxLen);
+}
+
+const LEAD_STATUS = ['new', 'contacted', 'qualified', 'closed', 'lost'];
+const LEAD_TYPES = ['quote', 'proposal', 'contact'];
+const NEED_CAT = ['cleaning', 'staffing', 'both', 'unsure', 'other'];
+
+// Public: quote / proposal / contact — no auth (same host as marketing site)
+app.post('/api/public/leads', async (req, res) => {
+  try {
+    const b = req.body || {};
+    const companyName = trimField(b.companyName, 300);
+    const contactName = trimField(b.contactName, 200);
+    const email = trimField(b.email, 320).toLowerCase();
+    if (!companyName || !contactName || !email) {
+      return res.status(400).json({ error: 'Company name, contact name, and email are required.' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Please enter a valid email address.' });
+    }
+    let requestType = trimField(b.requestType, 32);
+    if (!LEAD_TYPES.includes(requestType)) {
+      requestType = 'quote';
+    }
+    let needCategory = trimField(b.needCategory, 32);
+    if (!NEED_CAT.includes(needCategory)) {
+      needCategory = 'unsure';
+    }
+    const doc = new Lead({
+      requestType,
+      companyName,
+      contactName,
+      email,
+      phone: trimField(b.phone, 64),
+      facilityName: trimField(b.facilityName, 300),
+      serviceLocation: trimField(b.serviceLocation, 500),
+      serviceTypeNeeded: trimField(b.serviceTypeNeeded, 500),
+      squareFootage: trimField(b.squareFootage, 120),
+      needCategory,
+      message: trimField(b.message, 8000),
+      desiredTimeline: trimField(b.desiredTimeline, 500),
+      status: 'new',
+      source: trimField(b.source, 64) || 'website',
+    });
+    await doc.save();
+    res.status(201).json({
+      message: 'Thank you — your request was received.',
+      id: doc._id,
+    });
+  } catch (error) {
+    console.error('Lead submission error:', error);
+    res.status(500).json({ error: 'Could not save your request. Please try again later.' });
+  }
+});
+
+// Admin CRM: list lead intake (newest first)
+app.get('/api/leads', async (req, res) => {
+  try {
+    const status = trimField(req.query.status, 32);
+    const q = {};
+    if (status && LEAD_STATUS.includes(status)) {
+      q.status = status;
+    }
+    const leads = await Lead.find(q).sort({ createdAt: -1 }).lean();
+    res.json(leads);
+  } catch (error) {
+    console.error('Fetch leads error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/leads/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid lead id' });
+    }
+    const lead = await Lead.findById(id).lean();
+    if (!lead) {
+      return res.status(404).json({ error: 'Lead not found' });
+    }
+    res.json(lead);
+  } catch (error) {
+    console.error('Get lead error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.patch('/api/leads/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid lead id' });
+    }
+    const body = req.body || {};
+    const updates = {};
+    if (body.status !== undefined) {
+      if (!LEAD_STATUS.includes(body.status)) {
+        return res.status(400).json({ error: 'Invalid status' });
+      }
+      updates.status = body.status;
+    }
+    if (body.adminNotes !== undefined) {
+      updates.adminNotes = trimField(body.adminNotes, 8000);
+    }
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: 'No valid fields to update (status or adminNotes).' });
+    }
+    const updated = await Lead.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true }
+    ).lean();
+    if (!updated) {
+      return res.status(404).json({ error: 'Lead not found' });
+    }
+    res.json({ message: 'Updated', data: updated });
+  } catch (error) {
+    console.error('Patch lead error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Rendering home page (alternate URL)
+app.get('/home', (req, res) => {
+  res.sendFile(path.join(__dirname, 'static', 'Web', 'home.html'));
+});
+
+async function seedInvoiceTemplates() {
+  const n = await InvoiceTemplate.countDocuments();
+  if (n > 0) return;
+  await InvoiceTemplate.insertMany([
+    {
+      slug: 'recurring-monthly-cleaning',
+      name: 'Recurring monthly cleaning',
+      description: 'Contract-style monthly janitorial billing.',
+      invoice_title: 'Monthly janitorial services',
+      template_type: 'Recurring monthly',
+      bill_to: 'Client / company name\nBilling address line 1\nCity, ST ZIP',
+      service_address: 'Service site address',
+      service_description:
+        'Monthly janitorial and sanitation services per agreed scope of work and schedule.',
+      line_items: [
+        { description: 'Monthly janitorial — standard schedule', quantity: 1, unit_price: 0 },
+        { description: 'Consumables & supplies allocation', quantity: 1, unit_price: 0 },
+      ],
+      tax_rate_percent: 0,
+      notes: 'Payment due within 30 days of invoice date. Thank you for your business.',
+      is_system: true,
+    },
+    {
+      slug: 'one-time-service',
+      name: 'One-time service',
+      description: 'Single visit or project invoice.',
+      invoice_title: 'Building services — one-time',
+      template_type: 'One-time',
+      bill_to: 'Client / company name\nBilling address',
+      service_address: 'Job site address',
+      service_description: 'Labor and materials for the service described below.',
+      line_items: [
+        { description: 'Labor — standard rate', quantity: 1, unit_price: 0 },
+        { description: 'Materials / supplies', quantity: 1, unit_price: 0 },
+      ],
+      tax_rate_percent: 0,
+      notes: 'Payment due on receipt unless otherwise agreed.',
+      is_system: true,
+    },
+    {
+      slug: 'emergency-service',
+      name: 'Emergency / after-hours',
+      description: 'Urgent response or after-hours call.',
+      invoice_title: 'Emergency service call',
+      template_type: 'Emergency',
+      bill_to: 'Client / company name\nBilling address',
+      service_address: 'Service location',
+      service_description:
+        'Emergency response and remediation services as performed on the date(s) listed.',
+      line_items: [
+        { description: 'Emergency dispatch / after-hours labor', quantity: 1, unit_price: 0 },
+        { description: 'Materials used on site', quantity: 1, unit_price: 0 },
+      ],
+      tax_rate_percent: 0,
+      notes: 'Premium rates may apply for after-hours and emergency response.',
+      is_system: true,
+    },
+    {
+      slug: 'client-site-specific',
+      name: 'Client / site-specific',
+      description: 'Structured for a named client and property.',
+      invoice_title: 'Services — [Client name] — [Site]',
+      template_type: 'Client / site',
+      bill_to: '[Client legal name]\nAccounts payable\nAddress',
+      service_address: '[Building or suite — full service address]',
+      service_description:
+        'Services performed for the above location in accordance with MG Building Services standards and any written addenda.',
+      line_items: [
+        { description: 'Scheduled services — this period', quantity: 1, unit_price: 0 },
+      ],
+      tax_rate_percent: 0,
+      notes: 'Reference PO # or property ID on remittance if applicable.',
+      is_system: true,
+    },
+  ]);
+}
+
+app.listen(PORT, async () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+  try {
+    await seedInvoiceTemplates();
+  } catch (err) {
+    console.error('Invoice template seed:', err);
+  }
 });
 
 

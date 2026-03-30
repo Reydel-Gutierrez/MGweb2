@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Edit invoice — MG Operations</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link rel="stylesheet" href="../css/mg-admin.css">
+  <link rel="stylesheet" href="../css/mg-invoice-document.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-admin-app">
+  <div id="mg-sidebar-root"></div>
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mg-navbar-clean">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="dashboard.html">Home</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="invoice-workspace.html">Invoice workspace</a></li>
+            <li class="breadcrumb-item text-sm text-dark active">Edit</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">Invoice editor</h6>
+        </nav>
+        <div class="ms-md-auto d-flex align-items-center gap-2">
+          <span class="badge bg-gradient-secondary" id="mg-ie-status-badge">Draft</span>
+          <span class="text-sm font-weight-bold" data-mg-user-name></span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+      <div id="mg-ie-alert" class="alert py-2 px-3 mb-3 d-none" role="alert"></div>
+
+      <div class="mg-toolbar mb-3">
+        <div class="d-flex flex-wrap gap-2">
+          <a href="invoice-workspace.html" class="btn btn-sm btn-outline-secondary mb-0"><i class="fas fa-arrow-left me-1"></i> Workspace</a>
+          <a href="invoice-templates.html" class="btn btn-sm btn-outline-dark mb-0"><i class="fas fa-layer-group me-1"></i> Templates</a>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-sm btn-outline-dark mb-0" id="mg-ie-save"><i class="fas fa-save me-1"></i> Save draft</button>
+          <button type="button" class="btn btn-sm btn-outline-primary mb-0" id="mg-ie-preview"><i class="fas fa-eye me-1"></i> Preview</button>
+          <button type="button" class="btn btn-sm btn-outline-danger mb-0" id="mg-ie-pdf" title="Save as PDF"><i class="fas fa-file-pdf me-1"></i> Download PDF</button>
+          <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-ie-send"><i class="fas fa-paper-plane me-1"></i> Send</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-8 mb-4">
+          <div class="card mg-section-card">
+            <div class="card-header"><h6>Invoice details</h6></div>
+            <div class="card-body">
+              <div class="row g-2 mb-2">
+                <div class="col-md-4">
+                  <label class="form-label text-xs">Invoice #</label>
+                  <input type="text" class="form-control form-control-sm" id="mg-ie-number" placeholder="e.g. INV-2026-001">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label text-xs">Issue date</label>
+                  <input type="date" class="form-control form-control-sm" id="mg-ie-date">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label text-xs">Due date</label>
+                  <input type="date" class="form-control form-control-sm" id="mg-ie-due">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-xs">Invoice title</label>
+                  <input type="text" class="form-control form-control-sm" id="mg-ie-title">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-xs">Template / type label</label>
+                  <input type="text" class="form-control form-control-sm" id="mg-ie-type" placeholder="e.g. Recurring monthly">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-xs">Client name</label>
+                  <input type="text" class="form-control form-control-sm" id="mg-ie-client">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-xs">Service address</label>
+                  <input type="text" class="form-control form-control-sm" id="mg-ie-service-addr">
+                </div>
+                <div class="col-12">
+                  <label class="form-label text-xs">Bill to</label>
+                  <textarea class="form-control form-control-sm" id="mg-ie-billto" rows="3" placeholder="Name, company, billing address"></textarea>
+                </div>
+                <div class="col-12">
+                  <label class="form-label text-xs">Service description</label>
+                  <textarea class="form-control form-control-sm" id="mg-ie-svc-desc" rows="3"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mg-section-card mt-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">Line items</h6>
+              <button type="button" class="btn btn-sm btn-outline-dark mb-0" id="mg-ie-add-line"><i class="fas fa-plus me-1"></i> Add line</button>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table mb-0" id="mg-ie-lines">
+                  <thead class="bg-light">
+                    <tr>
+                      <th class="text-xs">Description</th>
+                      <th class="text-xs" style="width:90px;">Qty</th>
+                      <th class="text-xs" style="width:110px;">Unit $</th>
+                      <th class="text-xs" style="width:100px;">Line $</th>
+                      <th class="text-xs text-end" style="width:48px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+          <div class="card mg-section-card">
+            <div class="card-header"><h6>Totals</h6></div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between text-sm mb-2">
+                <span>Subtotal</span>
+                <span id="mg-ie-sub">$0.00</span>
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label text-xs">Tax %</label>
+                  <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="mg-ie-taxpct" value="0">
+                </div>
+                <div class="col-6">
+                  <label class="form-label text-xs">Tax $</label>
+                  <input type="text" class="form-control form-control-sm bg-light" id="mg-ie-taxamt" readonly value="0.00">
+                </div>
+              </div>
+              <div class="d-flex justify-content-between font-weight-bold mb-3">
+                <span>Total</span>
+                <span id="mg-ie-total">$0.00</span>
+              </div>
+              <label class="form-label text-xs">Notes</label>
+              <textarea class="form-control form-control-sm" id="mg-ie-notes" rows="5" placeholder="Terms, remittance instructions…"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="mg-ie-pdf-export" class="mg-invoice-doc--export" aria-hidden="true"></div>
+
+  <div class="modal fade" id="mg-ie-preview-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Invoice preview</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-0">
+          <div id="mg-ie-preview-body" class="mg-invoice-preview-wrap p-4"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-sm btn-outline-danger mb-0" id="mg-ie-preview-pdf"><i class="fas fa-file-pdf me-1"></i> Download PDF</button>
+          <button type="button" class="btn btn-sm bg-gradient-dark" id="mg-ie-preview-send"><i class="fas fa-paper-plane me-1"></i> Send from preview</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-shell.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      MgAdminShell.init({ page: 'invoice-workspace' });
+    });
+  </script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="routes/invoice-edit.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+</body>
+</html>

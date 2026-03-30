@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Request a quote or proposal — MG Building Services</title>
+  <meta name="description" content="Submit a commercial service request for MG Building Services: cleaning, janitorial, staffing, or facility support.">
+  <link rel="icon" type="image/png" href="assets/img/MGnewlogo2.png">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/mg-public.css" rel="stylesheet">
+</head>
+<body class="mg-public" data-mg-page="proposal">
+  <div id="mg-header-root"></div>
+
+  <main>
+    <section class="mg-section mg-section--white pt-4">
+      <div class="container">
+        <p class="mg-section-kicker mb-2">Business intake</p>
+        <h1 class="mg-section-title display-6 mb-3">Request a quote or proposal</h1>
+        <p class="lead text-secondary col-lg-9 mb-4">
+          Complete the form below so we can understand your company, property, and service needs. Select <strong>Proposal request</strong> when you need a written scope and structured plan;
+          choose <strong>Quote request</strong> for budget-level guidance and next-step alignment.
+        </p>
+
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="bg-white border rounded-3 p-4 p-md-5 shadow-sm">
+              <form class="mg-lead-form" id="mg-lead-form-proposal" novalidate>
+                <div id="mg-lead-form-proposal-feedback" class="alert d-none mb-4" role="alert"></div>
+
+                <div class="row g-3 mb-2">
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-type">Request type <span class="text-danger">*</span></label>
+                    <select class="form-select" id="pr-type" name="requestType" required>
+                      <option value="quote">Quote request</option>
+                      <option value="proposal">Proposal request</option>
+                      <option value="contact">General contact</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-need">Cleaning need vs staffing need</label>
+                    <select class="form-select" id="pr-need" name="needCategory">
+                      <option value="unsure">Assess for me</option>
+                      <option value="cleaning">Primarily cleaning / janitorial</option>
+                      <option value="staffing">Primarily staffing / labor</option>
+                      <option value="both">Both cleaning and staffing</option>
+                      <option value="other">Other / mixed</option>
+                    </select>
+                  </div>
+                </div>
+
+                <h2 class="h6 text-uppercase text-muted mt-4 mb-3">Organization</h2>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-co">Company name <span class="text-danger">*</span></label>
+                    <input class="form-control" id="pr-co" name="companyName" required autocomplete="organization">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-contact">Contact name <span class="text-danger">*</span></label>
+                    <input class="form-control" id="pr-contact" name="contactName" required autocomplete="name">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-email">Email <span class="text-danger">*</span></label>
+                    <input class="form-control" id="pr-email" name="email" type="email" required autocomplete="email">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-phone">Phone</label>
+                    <input class="form-control" id="pr-phone" name="phone" type="tel" autocomplete="tel">
+                  </div>
+                </div>
+
+                <h2 class="h6 text-uppercase text-muted mt-4 mb-3">Site &amp; service</h2>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-fac">Property / facility name</label>
+                    <input class="form-control" id="pr-fac" name="facilityName" placeholder="Building or campus name">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-loc">Service location</label>
+                    <input class="form-control" id="pr-loc" name="serviceLocation" placeholder="City, region, or full address">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-svc">Type of service needed</label>
+                    <input class="form-control" id="pr-svc" name="serviceTypeNeeded" placeholder="e.g. nightly janitorial, dock coverage, dayporter">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="pr-sq">Approx. square footage</label>
+                    <input class="form-control" id="pr-sq" name="squareFootage" placeholder="Optional">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="pr-msg">Details &amp; message</label>
+                    <textarea class="form-control" id="pr-msg" name="message" rows="5" placeholder="Hours of operation, standards, access constraints, current pain points, or RFP context."></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="pr-time">Desired timeline</label>
+                    <input class="form-control" id="pr-time" name="desiredTimeline" placeholder="Target start date, RFP deadline, or urgency">
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top">
+                  <button type="submit" class="btn btn-mg-primary btn-lg">Submit request</button>
+                  <p class="small text-muted mt-3 mb-0">
+                    This form submits securely to MG Building Services for business development follow-up. It is not intended for employment applications—employees should use the employee portal linked in the header.
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="mg-footer-root"></div>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="js/mg-public-shell.js"></script>
+  <script src="js/mg-public-forms.js"></script>
+</body>
+</html>

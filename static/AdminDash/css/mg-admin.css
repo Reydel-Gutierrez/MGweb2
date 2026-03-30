@@ -1,0 +1,253 @@
+/**
+ * MG Building Services — Admin operations layer
+ * Sits on top of the dashboard base stylesheet; workflow-oriented, higher density.
+ */
+
+:root {
+  --mg-admin-surface: #f4f6f9;
+  --mg-admin-border: #e2e8f0;
+  --mg-admin-heading: #1e293b;
+  --mg-admin-muted: #64748b;
+  --mg-admin-accent: #0f766e;
+}
+
+body.mg-admin-app {
+  background-color: var(--mg-admin-surface) !important;
+}
+
+/* Brand mark — MGnewlogo */
+.navbar-brand .mg-brand-logo,
+.mg-brand-logo {
+  max-height: 48px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
+}
+
+.mg-page-hero {
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #0f766e 100%);
+  color: #fff;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.12);
+}
+
+.mg-page-hero h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.02em;
+}
+
+.mg-page-hero p {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.88;
+  max-width: 42rem;
+}
+
+.mg-kpi-card .card-body {
+  padding: 1rem 1.1rem;
+}
+
+.mg-kpi-card .numbers p.text-sm {
+  color: var(--mg-admin-muted) !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600 !important;
+}
+
+.mg-kpi-card h5 {
+  color: var(--mg-admin-heading);
+  font-size: 1.35rem;
+}
+
+.mg-section-card .card-header {
+  border-bottom: 1px solid var(--mg-admin-border);
+  padding: 0.85rem 1.1rem;
+  background: #fff;
+}
+
+.mg-section-card .card-header h6 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mg-admin-heading);
+  margin: 0;
+}
+
+.mg-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.mg-toolbar .form-control,
+.mg-toolbar .form-select {
+  font-size: 0.875rem;
+}
+
+.mg-table-wrap {
+  max-height: min(70vh, 720px);
+  overflow: auto;
+}
+
+.mg-table-wrap table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f8fafc;
+  box-shadow: 0 1px 0 var(--mg-admin-border);
+}
+
+.table.mg-data-table tbody td {
+  font-size: 0.8125rem;
+  vertical-align: middle;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+}
+
+.mg-empty-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--mg-admin-muted);
+  font-size: 0.9rem;
+}
+
+.mg-skeleton {
+  animation: mg-pulse 1.2s ease-in-out infinite;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  border-radius: 0.35rem;
+  height: 1rem;
+}
+
+@keyframes mg-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.mg-quick-actions .btn {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.mg-nav-brand-sub {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  display: block;
+  margin-top: 0.15rem;
+}
+
+.mg-alert-strip {
+  border-radius: 0.5rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  border-left: 4px solid var(--mg-admin-accent);
+  background: #ecfdf5;
+  color: #134e4a;
+  margin-bottom: 1rem;
+}
+
+.mg-pagination .page-link {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.65rem;
+}
+
+#navbarBlur.mg-navbar-clean .input-group {
+  max-width: 220px;
+}
+
+#navbarBlur.mg-navbar-clean .breadcrumb {
+  margin-bottom: 0.15rem;
+}
+
+.mg-link-list a {
+  display: block;
+  padding: 0.45rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+  border-bottom: 1px solid var(--mg-admin-border);
+}
+
+.mg-link-list a:last-child {
+  border-bottom: none;
+}
+
+.mg-link-list a:hover {
+  color: var(--mg-admin-accent);
+}
+
+/* Sidebar: stronger hierarchy */
+#sidenav-main .nav-link.active {
+  font-weight: 700;
+}
+
+/* Sidebar nav icons: base theme sets .icon-shape i { color: #fff } for Nucleo on colored tiles.
+   Our Font Awesome icons sit on light backgrounds — restore visible colors. */
+#sidenav-main .nav-link .icon-shape > i {
+  color: #344767 !important;
+  opacity: 1 !important;
+  top: 0 !important;
+  position: relative !important;
+  font-size: 0.8rem !important;
+  line-height: 1 !important;
+}
+
+#sidenav-main .nav-link.active .icon-shape > i {
+  color: #fff !important;
+}
+
+/* —— Mobile: top bar + sidenav overlay (shell injects #iconNavbarSidenav after DOM ready) —— */
+.mg-sidenav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.42);
+  z-index: 1020;
+  pointer-events: none;
+}
+
+@media (max-width: 1199.98px) {
+  .mg-sidenav-backdrop.mg-sidenav-backdrop--visible {
+    display: block;
+    pointer-events: auto;
+  }
+
+  #sidenav-main.sidenav {
+    z-index: 1030;
+  }
+
+  .mg-admin-app .navbar-main.px-0.mx-4 {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+  }
+
+  .mg-sidenav-open-btn {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .mg-admin-app .main-content > .container-fluid {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .mg-page-hero {
+    padding: 1rem 1.1rem;
+  }
+}
+

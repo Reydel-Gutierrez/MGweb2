@@ -1,7 +1,7 @@
 {
   "name": "mgweb2",
   "version": "1.0.0",
-  "description": "",
+  "description": "MG Building Services — internal operations, employee portal, and public marketing site",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Invoice templates — MG Operations</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link rel="stylesheet" href="../css/mg-admin.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-admin-app">
+  <div id="mg-sidebar-root"></div>
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mg-navbar-clean">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="dashboard.html">Home</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="invoice-workspace.html">Invoice workspace</a></li>
+            <li class="breadcrumb-item text-sm text-dark active">Templates</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">Invoice templates</h6>
+        </nav>
+        <div class="ms-md-auto d-flex align-items-center">
+          <span class="text-sm font-weight-bold" data-mg-user-name></span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+      <div id="mg-it-alert" class="alert py-2 px-3 mb-3 d-none" role="alert"></div>
+
+      <div class="mg-page-hero">
+        <h1>Reusable invoice templates</h1>
+        <p>Start a new draft with default line items, bill-to wording, and notes. You can edit everything before sending.</p>
+      </div>
+
+      <div class="row" id="mg-it-grid"></div>
+    </div>
+  </main>
+
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-shell.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      MgAdminShell.init({ page: 'invoice-workspace' });
+    });
+  </script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="routes/invoice-templates.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+</body>
+</html>

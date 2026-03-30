@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — MG Building Services</title>
+  <meta name="description" content="Contact MG Building Services for commercial cleaning, janitorial programs, and facility staffing. Submit a quote or proposal request.">
+  <link rel="icon" type="image/png" href="assets/img/MGnewlogo2.png">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/mg-public.css" rel="stylesheet">
+</head>
+<body class="mg-public" data-mg-page="contact">
+  <div id="mg-header-root"></div>
+
+  <main>
+    <section class="mg-section mg-section--white pt-4">
+      <div class="container">
+        <p class="mg-section-kicker mb-2">Contact</p>
+        <h1 class="mg-section-title display-6 mb-3">Let’s talk about your facility</h1>
+        <p class="lead text-secondary col-lg-8">
+          The fastest path to the right team is our intake form—it captures site context so we can respond with relevant next steps.
+          For new opportunities, we recommend starting with a quote or proposal request.
+        </p>
+        <div class="d-flex flex-wrap gap-2 mb-5">
+          <a class="btn btn-mg-primary" href="proposal-request.html?intent=quote">Request a quote</a>
+          <a class="btn btn-outline-secondary" href="proposal-request.html?intent=proposal">Request a proposal</a>
+        </div>
+
+        <div class="row g-5">
+          <div class="col-lg-5">
+            <h2 class="h5 mg-section-title mb-3">Business intake</h2>
+            <p class="text-secondary">
+              Use the secure form to share company and property details. Submissions are routed internally for follow-up.
+            </p>
+            <p class="text-secondary small mb-0">
+              If you are a current partner with an operational issue, include your site name and the best callback window in the message field.
+            </p>
+          </div>
+          <div class="col-lg-7">
+            <div class="bg-white border rounded-3 p-4 shadow-sm">
+              <h2 class="h6 mb-3">Quick message</h2>
+              <form class="mg-lead-form" id="mg-lead-form-contact" novalidate>
+                <div id="mg-lead-form-contact-feedback" class="alert d-none mb-3" role="alert"></div>
+                <input type="hidden" name="requestType" value="contact">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label" for="ct-co">Company name <span class="text-danger">*</span></label>
+                    <input class="form-control" id="ct-co" name="companyName" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="ct-name">Contact name <span class="text-danger">*</span></label>
+                    <input class="form-control" id="ct-name" name="contactName" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="ct-em">Email <span class="text-danger">*</span></label>
+                    <input class="form-control" id="ct-em" name="email" type="email" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="ct-ph">Phone</label>
+                    <input class="form-control" id="ct-ph" name="phone" type="tel">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="ct-msg">Message <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="ct-msg" name="message" rows="4" required placeholder="How can we help?"></textarea>
+                  </div>
+                  <div class="col-12">
+                    <button type="submit" class="btn btn-mg-primary">Send message</button>
+                  </div>
+                </div>
+              </form>
+              <p class="small text-muted mt-3 mb-0">
+                Prefer a full scope conversation? Use the <a href="proposal-request.html">detailed request form</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="mg-footer-root"></div>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="js/mg-public-shell.js"></script>
+  <script src="js/mg-public-forms.js"></script>
+</body>
+</html>

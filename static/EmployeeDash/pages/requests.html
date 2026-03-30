@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Requests — MG Workforce</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/mg-employee.css">
+  <link rel="stylesheet" href="../css/employee-portal.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-employee-app" data-emp-page="requests">
+  <div id="emp-sidebar-root"></div>
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mt-3 mg-navbar-emp">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Requests</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0" id="emp-page-title">Punch corrections</h6>
+        </nav>
+        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+          <ul class="navbar-nav justify-content-end ms-md-auto align-items-center">
+            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+              <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                <div class="sidenav-toggler-inner">
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                </div>
+              </a>
+            </li>
+            <li class="nav-item ps-2">
+              <span class="nav-link text-body mb-0 text-sm cursor-pointer" id="emp-logout" role="button" tabindex="0">
+                <i class="fas fa-right-from-bracket me-1"></i> Sign out
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4 px-3 px-md-4">
+      <div class="row">
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card">
+            <div class="card-header pb-0 bg-gradient1 text-white">
+              <h6 class="text-white mb-0">New request</h6>
+              <p class="text-xs text-white mb-0 opacity-8">Describe the punch that is missing or incorrect. HR will review.</p>
+            </div>
+            <div class="card-body">
+              <form id="emp-req-form">
+                <div class="mb-3">
+                  <label class="form-label">Date you are correcting</label>
+                  <input type="date" class="form-control" id="emp-req-date" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Time</label>
+                  <input type="time" class="form-control" id="emp-req-time" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Should be</label>
+                  <select class="form-control" id="emp-req-action" required>
+                    <option value="in">Clock in</option>
+                    <option value="out">Clock out</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Explain what happened</label>
+                  <textarea class="form-control" rows="4" id="emp-req-note" placeholder="e.g. I forgot to punch out after my shift." required></textarea>
+                </div>
+                <button type="submit" class="btn bg-gradient-primary w-100 emp-btn-punch">Submit request</button>
+              </form>
+              <p class="text-xs text-muted mt-3 mb-0" id="emp-req-msg"></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6 mb-4">
+          <div class="card">
+            <div class="card-header pb-0">
+              <h6 class="mb-0">Your requests</h6>
+              <p class="text-xs text-muted mb-0">Status updates when processed by the office.</p>
+            </div>
+            <div class="card-body pt-2" id="emp-req-list">
+              <p class="text-sm text-muted mb-0">Loading…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/employee-auth.js"></script>
+  <script src="../js/employee-nav.js"></script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+  <script src="routes/requests-page.js"></script>
+</body>
+</html>
