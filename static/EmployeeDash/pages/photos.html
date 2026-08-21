@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Add photos — MG Workforce</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/mg-employee.css">
+  <link rel="stylesheet" href="../css/employee-portal.css">
+  <link rel="stylesheet" href="/css/mg-ops.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-employee-app" data-emp-page="photos">
+  <div id="emp-sidebar-root"></div>
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mt-3 mg-navbar-emp">
+      <div class="container-fluid emp-navbar-toolbar py-2 px-3">
+        <a href="javascript:;" class="nav-link text-body p-0 d-xl-none flex-shrink-0 emp-navbar-menu-btn" id="iconNavbarSidenav" aria-label="Open navigation menu" role="button">
+          <div class="sidenav-toggler-inner">
+            <i class="sidenav-toggler-line"></i>
+            <i class="sidenav-toggler-line"></i>
+            <i class="sidenav-toggler-line"></i>
+          </div>
+        </a>
+        <div class="emp-navbar-titles min-w-0">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+              <li class="breadcrumb-item text-sm text-dark active">Photos</li>
+            </ol>
+            <h6 class="font-weight-bolder mb-0 text-truncate" id="emp-page-title">Add photos</h6>
+          </nav>
+        </div>
+        <div class="emp-navbar-actions flex-shrink-0">
+          <span class="nav-link text-body mb-0 text-sm emp-logout cursor-pointer" id="emp-logout" role="button" tabindex="0">
+            <i class="fas fa-right-from-bracket me-1"></i> Sign out
+          </span>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid py-4 px-3 px-md-4">
+      <div id="mg-ops-alert" class="alert py-2 px-3 mb-3 d-none" role="alert"></div>
+      <div class="card mg-section-card mb-4">
+        <div class="card-body">
+          <h6 class="mb-1">Add photos to a shift</h6>
+          <p class="text-sm text-muted">Scheduled staff can also do this from My schedule by tapping the shift. Use this page if you are on site but not the person on the shift — for example a supervisor.</p>
+          <div class="mb-3">
+            <label class="form-label" for="mg-p-date">Shift date</label>
+            <input type="date" class="form-control" id="mg-p-date">
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="mg-p-shift">Shift</label>
+            <select class="form-select" id="mg-p-shift"></select>
+            <p class="text-xs text-muted mb-0 mt-1" id="mg-p-suggest"></p>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="mg-p-files">Photos</label>
+            <input class="form-control" type="file" id="mg-p-files" accept="image/*" multiple>
+            <p class="text-xs text-muted mt-1 mb-0">Take a picture or choose from your camera roll. You can select more than one.</p>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="mg-p-note">Note (optional)</label>
+            <textarea class="form-control" id="mg-p-note" rows="2" placeholder="Anything you want to record"></textarea>
+          </div>
+          <button type="button" class="btn bg-gradient-dark w-100 emp-upload-btn mb-0" id="mg-p-upload">
+            <i class="fas fa-cloud-arrow-up me-2"></i>Upload
+          </button>
+        </div>
+      </div>
+      <h6 class="mb-3">Recent uploads</h6>
+      <div id="mg-p-recent"></div>
+    </div>
+  </main>
+  <script src="../js/employee-auth.js"></script>
+  <script src="../js/employee-nav.js"></script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+  <script src="/js/mg-shift-photos.js"></script>
+  <script src="routes/photos-page.js"></script>
+</body>
+</html>

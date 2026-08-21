@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>My schedule — MG Workforce</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/mg-employee.css">
+  <link rel="stylesheet" href="../css/employee-portal.css">
+  <link rel="stylesheet" href="/css/mg-ops.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-employee-app" data-emp-page="schedule">
+  <div id="emp-sidebar-root"></div>
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mt-3 mg-navbar-emp">
+      <div class="container-fluid emp-navbar-toolbar py-2 px-3">
+        <a href="javascript:;" class="nav-link text-body p-0 d-xl-none flex-shrink-0 emp-navbar-menu-btn" id="iconNavbarSidenav" aria-label="Open navigation menu" role="button">
+          <div class="sidenav-toggler-inner">
+            <i class="sidenav-toggler-line"></i>
+            <i class="sidenav-toggler-line"></i>
+            <i class="sidenav-toggler-line"></i>
+          </div>
+        </a>
+        <div class="emp-navbar-titles min-w-0">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+              <li class="breadcrumb-item text-sm text-dark active">My schedule</li>
+            </ol>
+            <h6 class="font-weight-bolder mb-0 text-truncate" id="emp-page-title">Schedule</h6>
+          </nav>
+        </div>
+        <div class="emp-navbar-actions flex-shrink-0">
+          <span class="nav-link text-body mb-0 text-sm emp-logout cursor-pointer" id="emp-logout" role="button" tabindex="0">
+            <i class="fas fa-right-from-bracket me-1"></i> Sign out
+          </span>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid py-4 px-3 px-md-4">
+      <div id="mg-ops-alert" class="alert py-2 px-3 mb-3 d-none" role="alert"></div>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary mb-0" id="mg-view-week">Week</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary mb-0" id="mg-view-month">Month</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary mb-0" id="mg-view-list">Agenda</button>
+      </div>
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary mb-0" id="mg-prev">Prev</button>
+        <strong id="mg-range"></strong>
+        <button type="button" class="btn btn-sm btn-outline-secondary mb-0" id="mg-next">Next</button>
+      </div>
+      <div id="mg-cal"></div>
+      <div class="modal fade" id="mg-occ-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Shift</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="mg-occ-body"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/employee-auth.js"></script>
+  <script src="../js/employee-nav.js"></script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+  <script src="/js/mg-shift-photos.js"></script>
+  <script src="routes/schedule-page.js"></script>
+</body>
+</html>

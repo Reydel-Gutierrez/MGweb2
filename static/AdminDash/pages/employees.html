@@ -108,6 +108,10 @@
                 <input type="email" class="form-control form-control-sm" id="mg-emp-edit-email" autocomplete="email">
               </div>
               <div class="col-md-6">
+                <label class="form-label text-xs">Phone <span class="text-muted">(for SMS alerts)</span></label>
+                <input type="tel" class="form-control form-control-sm" id="mg-emp-edit-phone" placeholder="(305) 555-0100" autocomplete="tel">
+              </div>
+              <div class="col-md-6">
                 <label class="form-label text-xs">Username</label>
                 <input type="text" class="form-control form-control-sm" id="mg-emp-edit-username" autocomplete="username">
               </div>
@@ -130,6 +134,24 @@
               <div class="col-12">
                 <label class="form-label text-xs">New password <span class="text-muted">(optional)</span></label>
                 <input type="password" class="form-control form-control-sm" id="mg-emp-edit-password" placeholder="Leave blank to keep current" autocomplete="new-password">
+              </div>
+              <div class="col-12" id="mg-emp-notify-wrap">
+                <hr class="my-2">
+                <h6 class="text-sm mb-1">Incoming call notifications</h6>
+                <p class="text-xs text-muted mb-2">Only administrators can receive voicemail alerts. Existing staff stay off until you enable this.</p>
+                <div class="form-check mb-1">
+                  <input class="form-check-input" type="checkbox" id="mg-emp-notify-enabled">
+                  <label class="form-check-label text-sm" for="mg-emp-notify-enabled">Receive incoming call notifications</label>
+                </div>
+                <div class="form-check mb-1">
+                  <input class="form-check-input" type="checkbox" id="mg-emp-notify-email">
+                  <label class="form-check-label text-sm" for="mg-emp-notify-email">Email notifications</label>
+                </div>
+                <div class="form-check mb-1">
+                  <input class="form-check-input" type="checkbox" id="mg-emp-notify-sms">
+                  <label class="form-check-label text-sm" for="mg-emp-notify-sms">SMS notifications</label>
+                </div>
+                <div id="mg-emp-notify-warnings" class="text-xs text-danger mt-1"></div>
               </div>
             </div>
           </div>

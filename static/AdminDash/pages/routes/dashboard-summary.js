@@ -46,15 +46,17 @@
         fetch('/users').then(safeJson),
         fetch('/fetchInvoices').then(safeJson),
         fetch('/fetchPunchRequest?pendingOnly=1').then(safeJson),
-        fetch('/fetchTasks').then(safeJson),
-        fetch('/api/leads?status=new').then(safeJson)
+        fetch('/api/leads?status=new').then(safeJson),
+        fetch('/api/calls?listened=false').then(function (r) {
+          return r.ok ? r.json() : [];
+        })
       ]);
 
       var users = Array.isArray(results[0]) ? results[0] : [];
       var invoices = Array.isArray(results[1]) ? results[1] : [];
       var requests = Array.isArray(results[2]) ? results[2] : [];
-      var tasks = Array.isArray(results[3]) ? results[3] : [];
-      var newLeads = Array.isArray(results[4]) ? results[4] : [];
+      var newLeads = Array.isArray(results[3]) ? results[3] : [];
+      var unlistenedCalls = Array.isArray(results[4]) ? results[4] : [];
 
       var pendingInv = invoices.filter(function (inv) {
         return inv.status === 'Unpaid';
@@ -73,16 +75,15 @@
       var elReq = document.getElementById('mg-pending-requests-count');
       if (elReq) elReq.textContent = String(requests.length);
 
-      var elTask = document.getElementById('taskCount');
-      if (elTask) elTask.textContent = String(tasks.length);
+      var elLeads = document.getElementById('mg-new-leads-kpi');
+      if (elLeads) elLeads.textContent = String(newLeads.length);
 
       var elOpen = document.getElementById('mg-open-requests-kpi');
       if (elOpen) elOpen.textContent = String(requests.length);
 
       renderRecentInvoices(invoices);
       renderRecentEmployees(activeUsers);
-      renderUpcomingTasks(tasks);
-      renderAlerts(requests, pendingInv, newLeads.length);
+      renderAlerts(requests, pendingInv, newLeads.length, unlistenedCalls.length);
     } catch (e) {
       console.error(e);
     } finally {
@@ -158,40 +159,21 @@
     });
   }
 
-  function renderUpcomingTasks(tasks) {
-    var tbody = document.querySelector('#mg-upcoming-tasks tbody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    var upcoming = tasks
-      .slice()
-      .sort(function (a, b) {
-        return new Date(b.date) - new Date(a.date);
-      })
-      .slice(0, 5);
-    if (!upcoming.length) {
-      tbody.innerHTML =
-        '<tr><td colspan="3" class="mg-empty-state py-3">No tasks yet</td></tr>';
-      return;
-    }
-    upcoming.forEach(function (t) {
-      var tr = document.createElement('tr');
-      var d = new Date(t.date).toLocaleDateString();
-      tr.innerHTML =
-        '<td>' +
-        (t.title || '') +
-        '</td><td>' +
-        d +
-        '</td><td>#' +
-        (t.id != null ? t.id : '') +
-        '</td>';
-      tbody.appendChild(tr);
-    });
-  }
-
-  function renderAlerts(requests, pendingInv, newLeadsCount) {
+  function renderAlerts(requests, pendingInv, newLeadsCount, unlistenedCallCount) {
     var host = document.getElementById('mg-alert-list');
     if (!host) return;
     host.innerHTML = '';
+    if (unlistenedCallCount > 0) {
+      var callDiv = document.createElement('div');
+      callDiv.className = 'mb-2';
+      callDiv.innerHTML =
+        '<strong>' +
+        unlistenedCallCount +
+        '</strong> unlistened ' +
+        (unlistenedCallCount === 1 ? 'voicemail' : 'voicemails') +
+        ' — <a href="calls.html">Calls &amp; voicemail</a>';
+      host.appendChild(callDiv);
+    }
     if (newLeadsCount > 0) {
       var leadDiv = document.createElement('div');
       leadDiv.className = 'mb-2';

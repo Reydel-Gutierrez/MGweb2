@@ -43,7 +43,11 @@
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userInfo');
       localStorage.removeItem(PORTAL_KEY);
-      redirectSignin();
+      fetch('/adminLogout', { method: 'POST', credentials: 'same-origin' }).finally(
+        function () {
+          redirectSignin();
+        }
+      );
     }
   };
 })();

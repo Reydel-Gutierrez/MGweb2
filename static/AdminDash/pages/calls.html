@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Calls &amp; voicemail — MG Operations</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link rel="stylesheet" href="../css/mg-admin.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-admin-app">
+  <div id="mg-sidebar-root"></div>
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mg-navbar-clean">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="dashboard.html">Home</a></li>
+            <li class="breadcrumb-item text-sm text-dark active">Calls &amp; voicemail</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">Business line intake</h6>
+        </nav>
+        <div class="ms-md-auto d-flex align-items-center">
+          <span class="text-sm font-weight-bold" data-mg-user-name></span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+      <div class="mg-page-hero">
+        <h1>Calls &amp; voicemail</h1>
+        <p>Inbound calls to the MG business number. Play recordings, mark listened, and track callbacks. Sign in through the administrator portal so this page can load call records.</p>
+      </div>
+
+      <div id="mg-calls-alert" class="alert py-2 px-3 mb-3 d-none" role="alert"></div>
+
+      <div class="mg-toolbar mb-3 d-flex flex-wrap align-items-center gap-2">
+        <label class="text-sm text-muted mb-0">Listened</label>
+        <select id="mg-calls-listened" class="form-select form-select-sm" style="max-width:160px;">
+          <option value="" selected>All</option>
+          <option value="false">Unlistened</option>
+          <option value="true">Listened</option>
+        </select>
+        <label class="text-sm text-muted mb-0">Category</label>
+        <select id="mg-calls-category" class="form-select form-select-sm" style="max-width:180px;">
+          <option value="" selected>All</option>
+          <option value="existing_customer">Existing customer</option>
+          <option value="quote">Quote / services</option>
+          <option value="other">Other</option>
+          <option value="unknown">Unknown</option>
+        </select>
+        <label class="text-sm text-muted mb-0">Callback</label>
+        <select id="mg-calls-callback" class="form-select form-select-sm" style="max-width:160px;">
+          <option value="" selected>All</option>
+          <option value="new">New</option>
+          <option value="called_back">Called back</option>
+          <option value="completed">Completed</option>
+          <option value="no_answer">No answer</option>
+        </select>
+        <button type="button" id="mg-calls-refresh" class="btn btn-sm btn-outline-dark mb-0">Refresh</button>
+      </div>
+
+      <div class="card mg-section-card">
+        <div class="card-header bg-gradient-dark text-white">
+          <h6 class="mb-0 text-white" id="mg-calls-count">Loading…</h6>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive mg-table-wrap">
+            <table class="table mg-data-table mb-0">
+              <thead>
+                <tr>
+                  <th class="text-xs">New</th>
+                  <th class="text-xs">When</th>
+                  <th class="text-xs">Caller</th>
+                  <th class="text-xs">Category</th>
+                  <th class="text-xs">Language</th>
+                  <th class="text-xs">Voicemail</th>
+                  <th class="text-xs">Listened</th>
+                  <th class="text-xs">Callback</th>
+                  <th class="text-xs text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="mg-calls-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal fade" id="mg-call-detail-modal" tabindex="-1" aria-labelledby="mg-call-detail-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="mg-call-detail-title">Call details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="mg-call-detail-body">
+          <p class="text-muted text-sm mb-0">Loading…</p>
+        </div>
+        <div class="modal-footer flex-column align-items-stretch">
+          <label class="form-label text-sm mb-1" for="mg-call-admin-notes">Internal notes</label>
+          <textarea class="form-control form-control-sm" id="mg-call-admin-notes" rows="3" placeholder="Callback outcome, who they asked for, next steps…"></textarea>
+          <div class="d-flex justify-content-end gap-2 mt-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-sm bg-gradient-dark" id="mg-call-save-notes">Save notes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-shell.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      MgAdminShell.init({ page: 'calls' });
+    });
+  </script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="routes/calls-page.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+</body>
+</html>

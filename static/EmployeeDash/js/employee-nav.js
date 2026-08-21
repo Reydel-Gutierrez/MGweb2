@@ -38,7 +38,9 @@
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userInfo');
       localStorage.removeItem('mgPortal');
-      window.location.href = '/EmployeeDash/signin.html';
+      fetch('/employeeLogout', { method: 'POST', credentials: 'same-origin' }).finally(function () {
+        window.location.href = '/EmployeeDash/signin.html';
+      });
     });
   }
 

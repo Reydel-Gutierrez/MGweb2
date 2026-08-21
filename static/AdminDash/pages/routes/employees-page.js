@@ -39,16 +39,62 @@
     return u.active !== false;
   }
 
+  function notifyPrefs(user) {
+    var n = (user && user.notifications && user.notifications.incomingCalls) || {};
+    return {
+      enabled: n.enabled === true,
+      email: n.email === true,
+      sms: n.sms === true
+    };
+  }
+
+  function updateNotifyWarnings() {
+    var warn = $('mg-emp-notify-warnings');
+    if (!warn) return;
+    var msgs = [];
+    var isAdmin = $('mg-emp-edit-admin') && $('mg-emp-edit-admin').checked;
+    var enabled = $('mg-emp-notify-enabled') && $('mg-emp-notify-enabled').checked;
+    if (!isAdmin) {
+      warn.textContent = '';
+      return;
+    }
+    if (enabled && $('mg-emp-notify-email') && $('mg-emp-notify-email').checked) {
+      var email = ($('mg-emp-edit-email') && $('mg-emp-edit-email').value.trim()) || '';
+      if (!email) msgs.push('Email notifications require an email address.');
+    }
+    if (enabled && $('mg-emp-notify-sms') && $('mg-emp-notify-sms').checked) {
+      var phone = ($('mg-emp-edit-phone') && $('mg-emp-edit-phone').value.trim()) || '';
+      if (!phone) msgs.push('SMS notifications require a phone number.');
+    }
+    warn.textContent = msgs.join(' ');
+  }
+
+  function syncNotifySection() {
+    var wrap = $('mg-emp-notify-wrap');
+    var isAdmin = $('mg-emp-edit-admin') && $('mg-emp-edit-admin').checked;
+    if (wrap) wrap.style.display = isAdmin ? '' : 'none';
+    var enabled = $('mg-emp-notify-enabled') && $('mg-emp-notify-enabled').checked;
+    if ($('mg-emp-notify-email')) $('mg-emp-notify-email').disabled = !isAdmin || !enabled;
+    if ($('mg-emp-notify-sms')) $('mg-emp-notify-sms').disabled = !isAdmin || !enabled;
+    updateNotifyWarnings();
+  }
+
   function openEditModal(user) {
     $('mg-emp-edit-mongo-id').value = user._id || '';
     $('mg-emp-edit-fullName').value = user.fullName || '';
     $('mg-emp-edit-idNumber').value = user.idNumber || '';
     $('mg-emp-edit-email').value = user.email || '';
+    if ($('mg-emp-edit-phone')) $('mg-emp-edit-phone').value = user.phone || '';
     $('mg-emp-edit-username').value = user.username || '';
     $('mg-emp-edit-payRate').value = user.payRate != null ? user.payRate : '';
     $('mg-emp-edit-admin').checked = !!user.admin;
     $('mg-emp-edit-active').checked = isActive(user);
     $('mg-emp-edit-password').value = '';
+    var prefs = notifyPrefs(user);
+    if ($('mg-emp-notify-enabled')) $('mg-emp-notify-enabled').checked = prefs.enabled;
+    if ($('mg-emp-notify-email')) $('mg-emp-notify-email').checked = prefs.email;
+    if ($('mg-emp-notify-sms')) $('mg-emp-notify-sms').checked = prefs.sms;
+    syncNotifySection();
     var modal = document.getElementById('mg-emp-edit-modal');
     if (modal && window.bootstrap && bootstrap.Modal) {
       bootstrap.Modal.getOrCreateInstance(modal).show();
@@ -76,7 +122,8 @@
         username: $('mg-emp-edit-username').value,
         payRate: $('mg-emp-edit-payRate').value,
         admin: $('mg-emp-edit-admin').checked,
-        active: $('mg-emp-edit-active').checked
+        active: $('mg-emp-edit-active').checked,
+        phone: $('mg-emp-edit-phone') ? $('mg-emp-edit-phone').value : ''
       };
       var pw = $('mg-emp-edit-password').value;
       if (pw && pw.length) body.password = pw;
@@ -89,16 +136,47 @@
       var data = await res.json().catch(function () {
         return {};
       });
-      if (res.ok) {
-        showAlert(data.message || 'Employee updated.', 'success');
-        var modal = document.getElementById('mg-emp-edit-modal');
-        if (modal && window.bootstrap && bootstrap.Modal) {
-          bootstrap.Modal.getInstance(modal).hide();
-        }
-        await load();
-      } else {
+      if (!res.ok) {
         showAlert(data.message || 'Could not save changes.', 'danger');
+        return;
       }
+
+      if (body.admin) {
+        var notifyRes = await fetch('/api/admin-users/' + encodeURIComponent(id) + '/notifications', {
+          method: 'PATCH',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: body.phone,
+            incomingCalls: {
+              enabled: $('mg-emp-notify-enabled') && $('mg-emp-notify-enabled').checked,
+              email: $('mg-emp-notify-email') && $('mg-emp-notify-email').checked,
+              sms: $('mg-emp-notify-sms') && $('mg-emp-notify-sms').checked
+            }
+          })
+        });
+        var notifyData = await notifyRes.json().catch(function () {
+          return {};
+        });
+        if (notifyRes.status === 401) {
+          showAlert(
+            'Employee saved, but call-notification settings require an administrator sign-in cookie. Sign in again, then retry.',
+            'warning'
+          );
+        } else if (!notifyRes.ok) {
+          showAlert(notifyData.error || 'Employee saved, but notification settings failed.', 'warning');
+        } else {
+          showAlert(data.message || 'Employee updated.', 'success');
+        }
+      } else {
+        showAlert(data.message || 'Employee updated.', 'success');
+      }
+
+      var modal = document.getElementById('mg-emp-edit-modal');
+      if (modal && window.bootstrap && bootstrap.Modal) {
+        bootstrap.Modal.getInstance(modal).hide();
+      }
+      await load();
     } catch (e) {
       console.error(e);
       showAlert('Network error while saving.', 'danger');
@@ -336,6 +414,12 @@
     if (saveBtn) {
       saveBtn.addEventListener('click', saveEmployeeEdit);
     }
+    ['mg-emp-edit-admin', 'mg-emp-notify-enabled', 'mg-emp-notify-email', 'mg-emp-notify-sms', 'mg-emp-edit-email', 'mg-emp-edit-phone'].forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      el.addEventListener('change', syncNotifySection);
+      el.addEventListener('input', updateNotifyWarnings);
+    });
     load();
   });
 })();

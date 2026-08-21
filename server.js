@@ -1,15 +1,51 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
 const { User } = require('./db/db.js'); // Import User model from db.js
+const {
+  setAdminSessionCookie,
+  clearAdminSessionCookie,
+  setPortalSessionCookie,
+  clearPortalSessionCookie,
+  sessionSecret,
+} = require('./comms/adminAuth');
+const { resolveRole, staffFilter } = require('./ops/auth');
+const { startPhotoExpirySweep } = require('./ops/expirePhotos');
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
+if (String(process.env.PUBLIC_BASE_URL || '').startsWith('https')) {
+  app.set('trust proxy', 1);
+}
+
+app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'static')));
+
+app.use('/webhooks/twilio', require('./comms/voice'));
+app.use('/webhooks/twilio', require('./comms/messages'));
+app.use('/api/calls', require('./comms/adminCalls'));
+app.use('/api/admin-users', require('./comms/adminNotifications'));
+app.use('/api/ops', require('./ops'));
+
+app.post('/adminLogout', (req, res) => {
+  clearAdminSessionCookie(res);
+  res.json({ message: 'Signed out' });
+});
+
+app.post('/employeeLogout', (req, res) => {
+  clearPortalSessionCookie(res);
+  res.json({ message: 'Signed out' });
+});
+
+app.post('/clientLogout', (req, res) => {
+  clearPortalSessionCookie(res);
+  res.json({ message: 'Signed out' });
+});
 
 // Assuming you have a route to handle user registration
 app.post('/register', async (req, res) => {
@@ -23,7 +59,17 @@ app.post('/register', async (req, res) => {
     }
 
     // Create a new user
-    const newUser = new User({ fullName, idNumber, email, username, password, payRate, admin });
+    const isAdmin = Boolean(admin);
+    const newUser = new User({
+      fullName,
+      idNumber,
+      email,
+      username,
+      password,
+      payRate,
+      admin: isAdmin,
+      role: isAdmin ? 'admin' : 'employee',
+    });
     await newUser.save();
 
     res.status(201).json({ message: 'User created successfully' });
@@ -46,7 +92,18 @@ app.post('/login', async (req, res) => {
         res.status(401).json({ message: 'Invalid credentials' });
       } else if (user.active === false) {
         res.status(403).json({ message: 'This account is deactivated' });
-      } else if (user.admin) {
+      } else if (resolveRole(user) === 'client') {
+        res.status(403).json({
+          message: 'This account uses the client portal. Choose Client in Where are you signing in?',
+          reason: 'CLIENT_ACCOUNT',
+        });
+      } else if (user.admin || resolveRole(user) === 'admin') {
+        if (!sessionSecret()) {
+          return res.status(503).json({
+            message: 'Sign-in is not configured on this server. Ask MG office to set MG_SESSION_SECRET.',
+          });
+        }
+        setAdminSessionCookie(res, user.username);
         res.json({ message: 'Login successful', username: user.username, name: user.fullName });
       } else {
         res.status(403).json({
@@ -74,7 +131,18 @@ app.post('/login', async (req, res) => {
         res.status(401).json({ message: 'Invalid credentials' });
       } else if (user.active === false) {
         res.status(403).json({ message: 'This account is deactivated' });
+      } else if (resolveRole(user) === 'client') {
+        res.status(403).json({
+          message: 'This account uses the client portal. Choose Client in Where are you signing in?',
+          reason: 'CLIENT_ACCOUNT',
+        });
       } else {
+        if (!sessionSecret()) {
+          return res.status(503).json({
+            message: 'Sign-in is not configured on this server. Ask MG office to set MG_SESSION_SECRET.',
+          });
+        }
+        setPortalSessionCookie(res, user.username, 'employee');
         res.json({
           message: 'Login successful',
           username: user.username,
@@ -89,6 +157,39 @@ app.post('/login', async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   });
+
+app.post('/loginClient', async (req, res) => {
+  const { username, password } = req.body || {};
+  try {
+    const user = await User.findOne({ username });
+    if (!user || user.password !== password) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    if (user.active === false) {
+      return res.status(403).json({ message: 'This account is deactivated' });
+    }
+    if (resolveRole(user) !== 'client') {
+      return res.status(403).json({
+        message: 'This account is not a client portal login. Choose Employee or Administrator above.',
+        reason: 'NOT_CLIENT',
+      });
+    }
+    if (!sessionSecret()) {
+      return res.status(503).json({
+        message: 'Sign-in is not configured on this server. Ask MG office to set MG_SESSION_SECRET.',
+      });
+    }
+    setPortalSessionCookie(res, user.username, 'client');
+    res.json({
+      message: 'Login successful',
+      username: user.username,
+      name: user.fullName,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 
 /** Employee portal: profile (no password) */
 app.post('/employeeProfile', async (req, res) => {
@@ -118,7 +219,7 @@ app.post('/employeeProfile', async (req, res) => {
 // New route to fetch user data for the table
 app.get('/users', async (req, res) => {
   try {
-    const users = await User.find({}, { password: 0, __v: 0 }).lean();
+    const users = await User.find(staffFilter(), { password: 0, __v: 0 }).lean();
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -142,6 +243,7 @@ app.patch('/users/:id', async (req, res) => {
       idNumber,
       password,
       active,
+      phone,
     } = req.body;
 
     const current = await User.findById(id);
@@ -154,9 +256,15 @@ app.patch('/users/:id', async (req, res) => {
     if (email !== undefined) updates.email = String(email).trim();
     if (username !== undefined) updates.username = String(username).trim();
     if (payRate !== undefined) updates.payRate = String(payRate).trim();
-    if (admin !== undefined) updates.admin = Boolean(admin);
+    if (admin !== undefined) {
+      updates.admin = Boolean(admin);
+      if (current.role !== 'client') {
+        updates.role = updates.admin ? 'admin' : 'employee';
+      }
+    }
     if (idNumber !== undefined) updates.idNumber = String(idNumber).trim();
     if (active !== undefined) updates.active = Boolean(active);
+    if (phone !== undefined) updates.phone = String(phone).trim();
     if (password !== undefined && String(password).length > 0) {
       updates.password = String(password);
     }
@@ -1173,6 +1281,7 @@ app.listen(PORT, async () => {
   } catch (err) {
     console.error('Invoice template seed:', err);
   }
+  startPhotoExpirySweep();
 });
 
 

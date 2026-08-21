@@ -1,9 +1,16 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 
-const databaseName = 'MG';
+const mongoUri = process.env.MONGODB_URI;
+if (!mongoUri) {
+  console.error(
+    'MONGODB_URI is not set. Copy .env.example to .env and add your MongoDB connection string.'
+  );
+  process.exit(1);
+}
 
-// Connect to MongoDB
-mongoose.connect('mongodb+srv://reydeluser:rg012499@devcluster.erjhbu6.mongodb.net/MG', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose
+  .connect(mongoUri)
   .then(() => {
     console.log('MongoDB connected successfully');
   })
@@ -21,8 +28,18 @@ const userSchema = new mongoose.Schema({
   username: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   payRate: { type: String, maxlength: 32 },
+  phone: { type: String, trim: true, default: '' },
   admin: { type: Boolean, default: false },
+  role: { type: String, enum: ['employee', 'admin', 'client'] },
+  clientOrgId: { type: mongoose.Schema.Types.ObjectId, default: null, index: true },
   active: { type: Boolean, default: true },
+  notifications: {
+    incomingCalls: {
+      enabled: { type: Boolean, default: false },
+      email: { type: Boolean, default: false },
+      sms: { type: Boolean, default: false },
+    },
+  },
 });
 
 const User = mongoose.model('User', userSchema);

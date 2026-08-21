@@ -8,20 +8,38 @@
       title: 'Operations',
       items: [
         { id: 'dashboard', href: 'dashboard.html', label: 'Dashboard', icon: 'fa-chart-line' },
-        { id: 'employees', href: 'employees.html', label: 'Employees', icon: 'fa-users' },
-        { id: 'payroll', href: 'payroll.html', label: 'Payroll', icon: 'fa-file-invoice-dollar' },
-        { id: 'invoice-workspace', href: 'invoice-workspace.html', label: 'Invoice workspace', icon: 'fa-pen-to-square' },
-        { id: 'invoices', href: 'invoices.html', label: 'Invoice log', icon: 'fa-receipt' },
+        { id: 'staffing', href: 'staffing.html', label: 'Staffing schedule', icon: 'fa-calendar-days' },
+        { id: 'documentation', href: 'documentation.html', label: 'Photo docs', icon: 'fa-camera' },
         { id: 'time-punches', href: 'time-punches.html', label: 'Time & punches', icon: 'fa-clock' },
-        { id: 'requests', href: 'requests.html', label: 'Requests', icon: 'fa-clipboard-check' },
-        { id: 'leads', href: 'leads.html', label: 'Leads & intake', icon: 'fa-address-book' },
-        { id: 'tasks', href: 'tasks.html', label: 'Tasks & schedule', icon: 'fa-calendar-check' }
+        { id: 'requests', href: 'requests.html', label: 'Requests', icon: 'fa-clipboard-check' }
+      ]
+    },
+    {
+      title: 'Clients',
+      items: [
+        { id: 'clients', href: 'clients.html', label: 'Clients & buildings', icon: 'fa-briefcase' }
       ]
     },
     {
       title: 'Team',
       items: [
+        { id: 'employees', href: 'employees.html', label: 'Employees', icon: 'fa-users' },
         { id: 'register', href: 'registerEmployee.html', label: 'Register employee', icon: 'fa-user-plus' }
+      ]
+    },
+    {
+      title: 'Billing',
+      items: [
+        { id: 'payroll', href: 'payroll.html', label: 'Payroll', icon: 'fa-file-invoice-dollar' },
+        { id: 'invoice-workspace', href: 'invoice-workspace.html', label: 'Invoice workspace', icon: 'fa-pen-to-square' },
+        { id: 'invoices', href: 'invoices.html', label: 'Invoice log', icon: 'fa-receipt' }
+      ]
+    },
+    {
+      title: 'Inbox',
+      items: [
+        { id: 'calls', href: 'calls.html', label: 'Calls & voicemail', icon: 'fa-phone' },
+        { id: 'leads', href: 'leads.html', label: 'Leads & intake', icon: 'fa-address-book' }
       ]
     },
     {

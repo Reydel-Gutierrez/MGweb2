@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   var portalSelect = document.getElementById('portalSelect');
   var loginButton = document.getElementById('loginButton');
+  var loginForm = document.getElementById('loginForm');
   var card = document.getElementById('mgSigninCard');
   var rightPanel = document.getElementById('rightPanel');
   var portalHelp = document.getElementById('portalHelp');
@@ -9,11 +10,12 @@ document.addEventListener('DOMContentLoaded', function () {
   var portalSubtitle = document.getElementById('portalSubtitle');
   var panelHeading = document.getElementById('panelHeading');
   var panelBody = document.getElementById('panelBody');
+  var switchPortalTarget = 'client';
 
   var COPY = {
     employee: {
       help:
-        'For most MG staff: keep <strong>Employee</strong> selected. Only use Administrator if your job explicitly includes the admin site.',
+        'For most MG staff: keep <strong>Employee</strong> selected. Property contacts choose <strong>Client</strong>. Only use Administrator if your job explicitly includes the admin site.',
       badgeClass: 'mg-badge-employee',
       badgeText: 'Employee portal',
       title: 'Employee sign in',
@@ -37,15 +39,29 @@ document.addEventListener('DOMContentLoaded', function () {
       panelBody:
         'This path goes to the management dashboard. Field and crew members should use Employee — time clock and pay are not on the admin site. If you opened this by mistake, choose Employee in the dropdown.',
     },
+    client: {
+      help:
+        'Property and operations contacts: keep <strong>Client</strong> selected to see who is scheduled at your building and photo documentation from the MG team.',
+      badgeClass: 'mg-badge-client',
+      badgeText: 'Client portal',
+      title: 'Client sign in',
+      subtitle: 'Staffing schedule, on-site employees, and photos.',
+      btnClass: 'mg-btn-client',
+      btnLabel: 'Sign in to client portal',
+      panelHeading: 'Your building, at a glance',
+      panelBody:
+        'See which MG employees are scheduled at your property and review photo documentation while it is still within the retention window.',
+    },
   };
 
   function applyPortal(mode) {
-    var c = COPY[mode] || COPY.employee;
-    card.classList.remove('mg-mode-employee', 'mg-mode-admin');
-    card.classList.add(mode === 'admin' ? 'mg-mode-admin' : 'mg-mode-employee');
+    var key = COPY[mode] ? mode : 'employee';
+    var c = COPY[key];
+    card.classList.remove('mg-mode-employee', 'mg-mode-admin', 'mg-mode-client');
+    card.classList.add('mg-mode-' + key);
 
-    rightPanel.classList.remove('mg-panel-employee', 'mg-panel-admin');
-    rightPanel.classList.add(mode === 'admin' ? 'mg-panel-admin' : 'mg-panel-employee');
+    rightPanel.classList.remove('mg-panel-employee', 'mg-panel-admin', 'mg-panel-client');
+    rightPanel.classList.add('mg-panel-' + key);
 
     portalBadge.className = c.badgeClass;
     portalBadge.textContent = c.badgeText;
@@ -55,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
     panelBody.textContent = c.panelBody;
     portalHelp.innerHTML = c.help;
 
-    loginButton.classList.remove('mg-btn-employee', 'mg-btn-admin');
+    loginButton.classList.remove('mg-btn-employee', 'mg-btn-admin', 'mg-btn-client');
     loginButton.classList.add(c.btnClass);
     loginButton.textContent = c.btnLabel;
   }
@@ -63,11 +79,32 @@ document.addEventListener('DOMContentLoaded', function () {
   function initialModeFromUrl() {
     var q = new URLSearchParams(window.location.search);
     var p = (q.get('portal') || '').toLowerCase();
-    if (p === 'admin') return 'admin';
-    if (p === 'employee') return 'employee';
+    if (p === 'admin' || p === 'employee' || p === 'client') return p;
     var h = (window.location.hash || '').replace(/^#/, '').toLowerCase();
-    if (h === 'admin') return 'admin';
+    if (h === 'admin' || h === 'client') return h;
     return 'employee';
+  }
+
+  function loginUrl(portal) {
+    if (portal === 'admin') return '/login';
+    if (portal === 'client') return '/loginClient';
+    return '/loginEmployee';
+  }
+
+  function showLoginError(title, message) {
+    $('#mgModalLoginErrorTitle').text(title);
+    $('#mgModalLoginErrorBody').text(message);
+    $('#mgModalLoginError').modal('show');
+  }
+
+  function showWrongPortal(title, body, nextPortal, btnLabel, btnClass) {
+    switchPortalTarget = nextPortal;
+    $('#mgModalWrongPortalTitle').text(title);
+    $('#mgModalWrongPortalBody').text(body);
+    var btn = document.getElementById('mgSwitchPortalBtn');
+    btn.textContent = btnLabel;
+    btn.className = 'btn ' + btnClass;
+    $('#mgModalWrongPortal').modal('show');
   }
 
   var mode = initialModeFromUrl();
@@ -78,18 +115,18 @@ document.addEventListener('DOMContentLoaded', function () {
     applyPortal(portalSelect.value);
   });
 
-  loginButton.addEventListener('click', async function () {
-    var portal = portalSelect.value === 'admin' ? 'admin' : 'employee';
+  async function submitLogin() {
+    var portal = portalSelect.value;
+    if (portal !== 'admin' && portal !== 'client') portal = 'employee';
     var username = document.getElementById('usernameField').value;
     var password = document.getElementById('passwordField').value;
 
-    var url = portal === 'admin' ? '/login' : '/loginEmployee';
-
     try {
-      var response = await fetch(url, {
+      var response = await fetch(loginUrl(portal), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username, password: password }),
+        credentials: 'same-origin',
       });
 
       var data = await response.json();
@@ -98,24 +135,42 @@ document.addEventListener('DOMContentLoaded', function () {
         var isNotAdmin =
           portal === 'admin' &&
           (data.reason === 'NOT_ADMIN' ||
-            (typeof data.message === 'string' &&
-              data.message.indexOf('no an Admin') !== -1));
+            (typeof data.message === 'string' && data.message.indexOf('no an Admin') !== -1));
         if (isNotAdmin) {
           $('#mgModalNotAdmin').modal('show');
           return;
         }
-        $('#mgModalLoginErrorTitle').text(
-          portal === 'admin' ? 'Administrator sign in' : 'Employee sign in'
-        );
-        $('#mgModalLoginErrorBody').text(
-          data.message || 'Invalid credentials. Please try again.'
-        );
-        $('#mgModalLoginError').modal('show');
+        if (data.reason === 'CLIENT_ACCOUNT') {
+          showWrongPortal(
+            'Use the client portal',
+            'This username belongs to a client account. Choose Client in “Where are you signing in?” to see staffing and photos for your building.',
+            'client',
+            'Client sign in',
+            'mg-btn-client'
+          );
+          return;
+        }
+        if (data.reason === 'NOT_CLIENT') {
+          showWrongPortal(
+            'Not a client login',
+            'This username is for MG staff. Choose Employee for time clock and pay, or Administrator if you use the office dashboard.',
+            'employee',
+            'Employee sign in',
+            'mg-btn-employee'
+          );
+          return;
+        }
+        var titles = {
+          admin: 'Administrator sign in',
+          client: 'Client sign in',
+          employee: 'Employee sign in',
+        };
+        showLoginError(titles[portal] || 'Sign in', data.message || 'Invalid credentials. Please try again.');
         return;
       }
 
+      localStorage.setItem('isLoggedIn', 'true');
       if (portal === 'admin') {
-        localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('mgPortal', 'admin');
         localStorage.setItem(
           'userInfo',
@@ -132,7 +187,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      localStorage.setItem('isLoggedIn', 'true');
+      if (portal === 'client') {
+        localStorage.setItem('mgPortal', 'client');
+        localStorage.setItem(
+          'userInfo',
+          JSON.stringify({
+            store_username: data.username,
+            store_name: data.name || '',
+          })
+        );
+        window.location.href = '/ClientDash/pages/schedule.html';
+        return;
+      }
+
       localStorage.setItem('mgPortal', 'employee');
       var info = {
         store_username: data.username,
@@ -151,18 +218,30 @@ document.addEventListener('DOMContentLoaded', function () {
       window.location.href = '/EmployeeDash/pages/dashboard.html?' + q.toString();
     } catch (error) {
       console.error('Error:', error);
-      $('#mgModalLoginErrorTitle').text('Sign in');
-      $('#mgModalLoginErrorBody').text(
-        'Something went wrong. Check your connection and try again.'
-      );
-      $('#mgModalLoginError').modal('show');
+      showLoginError('Sign in', 'Something went wrong. Check your connection and try again.');
     }
-  });
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      submitLogin();
+    });
+  } else {
+    loginButton.addEventListener('click', submitLogin);
+  }
 
   $('#mgSwitchToEmployeeBtn').on('click', function () {
     $('#mgModalNotAdmin').modal('hide');
     portalSelect.value = 'employee';
     applyPortal('employee');
+    document.getElementById('usernameField').focus();
+  });
+
+  $('#mgSwitchPortalBtn').on('click', function () {
+    $('#mgModalWrongPortal').modal('hide');
+    portalSelect.value = switchPortalTarget;
+    applyPortal(switchPortalTarget);
     document.getElementById('usernameField').focus();
   });
 });

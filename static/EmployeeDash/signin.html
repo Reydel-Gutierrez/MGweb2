@@ -26,6 +26,9 @@
       .mg-panel-admin {
         background: linear-gradient(135deg, #3d2208 0%, #6b3a0f 40%, #1c0f08 100%);
       }
+      .mg-panel-client {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #0f766e 100%);
+      }
 
       /* Card frame: employee = calm blue accent */
       .mg-signin-card.mg-mode-employee {
@@ -36,6 +39,10 @@
       .mg-signin-card.mg-mode-admin {
         border: 3px solid #e8a317;
         box-shadow: 0 0 0 1px rgba(232, 163, 23, 0.35), 0 0.5rem 1.25rem rgba(60, 30, 0, 0.25);
+      }
+      .mg-signin-card.mg-mode-client {
+        border: 2px solid #99f6e4;
+        box-shadow: 0 0.35rem 1rem rgba(15, 118, 110, 0.18);
       }
 
       .mg-badge-employee {
@@ -60,6 +67,17 @@
         padding: 0.25rem 0.6rem;
         border-radius: 4px;
       }
+      .mg-badge-client {
+        display: inline-block;
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #115e59;
+        background: #ccfbf1;
+        border: 1px solid #5eead4;
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+      }
 
       .mg-btn-employee {
         background: linear-gradient(to right, #2c5282, #05152e) !important;
@@ -69,6 +87,11 @@
       .mg-btn-admin {
         background: linear-gradient(to right, #5c3d00, #2d1a05) !important;
         border: 2px solid #e8a317 !important;
+        color: #fff !important;
+      }
+      .mg-btn-client {
+        background: linear-gradient(to right, #0f766e, #134e4a) !important;
+        border: none !important;
         color: #fff !important;
       }
 
@@ -134,9 +157,10 @@
                     <select id="portalSelect" class="form-control" aria-describedby="portalHelp">
                       <option value="employee">Employee — time clock, pay history, my profile</option>
                       <option value="admin">Administrator — office dashboard (managers &amp; office only)</option>
+                      <option value="client">Client — staffing schedule and photos for your building</option>
                     </select>
                     <p class="small mt-2 mb-0 text-left" id="portalHelp">
-                      For most MG staff: keep <strong>Employee</strong> selected. Only use Administrator if your job explicitly includes the admin site.
+                      For most MG staff: keep <strong>Employee</strong> selected. Property contacts choose <strong>Client</strong>. Only use Administrator if your job explicitly includes the admin site.
                     </p>
                   </div>
 
@@ -146,7 +170,7 @@
                     <p class="small text-muted mb-0" id="portalSubtitle">Punch in/out, view pay, and requests.</p>
                   </div>
 
-                  <form>
+                  <form id="loginForm">
                     <div class="form-group mb-3">
                       <label class="form-label mb-1" for="usernameField">Username</label>
                       <input type="text" id="usernameField" class="form-control" autocomplete="username" />
@@ -158,7 +182,7 @@
                     </div>
 
                     <div class="text-center pt-1 mb-4">
-                      <button id="loginButton" type="button" class="btn btn-lg btn-block mg-btn-employee py-2">
+                      <button id="loginButton" type="submit" class="btn btn-lg btn-block mg-btn-employee py-2">
                         Sign in to employee portal
                       </button>
                     </div>
@@ -212,6 +236,25 @@
         <div class="modal-footer border-0 bg-light">
           <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
           <button type="button" class="btn mg-btn-employee" id="mgSwitchToEmployeeBtn">Employee sign in</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client account used on employee/admin, or staff used on client -->
+  <div class="modal fade mg-login-modal" id="mgModalWrongPortal" tabindex="-1" role="dialog" aria-labelledby="mgModalWrongPortalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content shadow">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="mgModalWrongPortalTitle">Wrong sign-in option</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body pt-0" id="mgModalWrongPortalBody"></div>
+        <div class="modal-footer border-0 bg-light">
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn mg-btn-client" id="mgSwitchPortalBtn">Switch portal</button>
         </div>
       </div>
     </div>

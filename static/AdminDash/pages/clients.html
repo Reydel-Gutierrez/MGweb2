@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Clients — MG Operations</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link rel="stylesheet" href="../css/mg-admin.css">
+  <link rel="stylesheet" href="/css/mg-ops.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-admin-app">
+  <div id="mg-sidebar-root"></div>
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mg-navbar-clean">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="dashboard.html">Home</a></li>
+            <li class="breadcrumb-item text-sm text-dark active">Clients</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">Clients</h6>
+        </nav>
+        <div class="ms-md-auto d-flex align-items-center">
+          <span class="text-sm font-weight-bold" data-mg-user-name></span>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid py-4">
+      <div class="mg-page-hero">
+        <h1>Clients</h1>
+        <p>Clients, the buildings they own, and who can sign in to the client portal.</p>
+      </div>
+      <div id="mg-ops-alert" class="alert py-2 px-3 mb-3 d-none" role="alert"></div>
+      <div class="mg-page-tabs">
+        <button type="button" class="btn btn-sm bg-gradient-dark" id="mg-tab-btn-clients" data-tab="clients">Clients</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="mg-tab-btn-buildings" data-tab="buildings">Buildings</button>
+      </div>
+      <div id="mg-tab-clients">
+      <div class="mg-toolbar">
+        <span class="text-sm text-muted">Clients sign in from the same MG login page — choose <strong>Client</strong>.</span>
+        <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-c-new">Add client</button>
+      </div>
+      <div class="row">
+        <div class="col-lg-5 mb-4">
+          <div class="card mg-section-card">
+            <div class="card-header"><h6>Clients</h6></div>
+            <div class="card-body p-0">
+              <div class="list-group list-group-flush" id="mg-c-list"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7 mb-4">
+          <div class="card mg-section-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 id="mg-c-users-title">Portal users</h6>
+              <button type="button" class="btn btn-sm btn-outline-dark mb-0" id="mg-c-new-user" disabled>Add user</button>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table mg-data-table mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-xs">Name</th>
+                      <th class="text-xs">Username</th>
+                      <th class="text-xs">Buildings</th>
+                      <th class="text-xs text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="mg-c-users"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div id="mg-tab-buildings" class="d-none">
+        <div class="mg-toolbar">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <select id="mg-b-filter-client" class="form-select form-select-sm" style="max-width:220px;">
+              <option value="">All clients</option>
+            </select>
+            <select id="mg-b-filter-active" class="form-select form-select-sm" style="max-width:160px;">
+              <option value="">Active &amp; inactive</option>
+              <option value="true" selected>Active only</option>
+              <option value="false">Inactive only</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-b-new">Add building</button>
+        </div>
+        <div class="card mg-section-card">
+          <div class="card-body p-0">
+            <div class="table-responsive mg-table-wrap">
+              <table class="table mg-data-table mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-xs">Building</th>
+                    <th class="text-xs">Client</th>
+                    <th class="text-xs">Address</th>
+                    <th class="text-xs">Status</th>
+                    <th class="text-xs text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="mg-b-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="mg-b-modal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="mg-b-modal-title">Building</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="mg-b-id">
+            <div class="mb-2">
+              <label class="form-label text-xs">Building name</label>
+              <input type="text" class="form-control" id="mg-b-name" placeholder="MiamiCentral">
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Client</label>
+              <select class="form-select" id="mg-b-client"></select>
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Address</label>
+              <textarea class="form-control" id="mg-b-address" rows="2" placeholder="Street, city, state"></textarea>
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Internal notes</label>
+              <textarea class="form-control" id="mg-b-notes" rows="2"></textarea>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="mg-b-active" checked>
+              <label class="form-check-label text-sm" for="mg-b-active">Active</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-outline-secondary mb-0" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-b-save">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="mg-c-org-modal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Client</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="mg-c-org-id">
+            <div class="mb-2">
+              <label class="form-label text-xs">Name</label>
+              <input type="text" class="form-control" id="mg-c-org-name" placeholder="Brightline">
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Notes</label>
+              <textarea class="form-control" id="mg-c-org-notes" rows="2"></textarea>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="mg-c-org-active" checked>
+              <label class="form-check-label text-sm" for="mg-c-org-active">Active</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-outline-secondary mb-0" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-c-org-save">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="mg-c-user-modal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="mg-c-user-title">Client user</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="mg-c-user-id">
+            <div class="mb-2">
+              <label class="form-label text-xs">Full name</label>
+              <input type="text" class="form-control" id="mg-c-user-name">
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Email</label>
+              <input type="email" class="form-control" id="mg-c-user-email">
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Username</label>
+              <input type="text" class="form-control" id="mg-c-user-username">
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Password <span class="text-muted" id="mg-c-user-pw-hint"></span></label>
+              <input type="password" class="form-control" id="mg-c-user-password" autocomplete="new-password">
+            </div>
+            <div class="form-check mb-2" id="mg-c-user-active-wrap">
+              <input class="form-check-input" type="checkbox" id="mg-c-user-active" checked>
+              <label class="form-check-label text-sm" for="mg-c-user-active">Active</label>
+            </div>
+            <label class="form-label text-xs">Building access</label>
+            <p class="text-xs text-muted mb-1">Leave all unchecked to give this person every building for this client. Check specific buildings to restrict.</p>
+            <div id="mg-c-user-buildings" class="border rounded p-2" style="max-height:180px;overflow:auto;"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-outline-secondary mb-0" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-c-user-save">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-shell.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      MgAdminShell.init({ page: 'clients' });
+    });
+  </script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="routes/clients-page.js"></script>
+  <script src="routes/buildings-page.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+</body>
+</html>

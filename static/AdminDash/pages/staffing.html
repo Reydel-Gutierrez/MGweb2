@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../img/logo/MGnewlogo.png">
+  <title>Staffing schedule — MG Operations</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="../assets/css/soft-ui-dashboard.css?v=1.0.7" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/gradient.css">
+  <link rel="stylesheet" href="../css/mg-admin.css">
+  <link rel="stylesheet" href="/css/mg-ops.css">
+</head>
+<body class="g-sidenav-show bg-gray-100 mg-admin-app">
+  <div id="mg-sidebar-root"></div>
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl mg-navbar-clean">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="dashboard.html">Home</a></li>
+            <li class="breadcrumb-item text-sm text-dark active">Staffing</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">Staffing schedule</h6>
+        </nav>
+        <div class="ms-md-auto d-flex align-items-center">
+          <span class="text-sm font-weight-bold" data-mg-user-name></span>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid py-4">
+      <div class="mg-page-hero">
+        <h1>Who works where</h1>
+        <p>Fixed staffing schedules, including weekly recurring shifts. Use a one-day exception when someone is off or another employee covers.</p>
+      </div>
+      <div id="mg-ops-alert" class="alert py-2 px-3 mb-3 d-none" role="alert"></div>
+      <div class="mg-toolbar">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary mb-0" id="mg-s-prev">Prev</button>
+          <strong id="mg-s-range" class="text-sm"></strong>
+          <button type="button" class="btn btn-sm btn-outline-secondary mb-0" id="mg-s-next">Next</button>
+          <button type="button" class="btn btn-sm btn-outline-dark mb-0" id="mg-s-today">This week</button>
+          <select id="mg-s-employee" class="form-select form-select-sm" style="max-width:200px;"><option value="">All employees</option></select>
+          <select id="mg-s-building" class="form-select form-select-sm" style="max-width:200px;"><option value="">All buildings</option></select>
+        </div>
+        <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-s-new">Add schedule</button>
+      </div>
+      <div class="mg-week-grid mb-4" id="mg-s-week"></div>
+      <div class="card mg-section-card">
+        <div class="card-header"><h6>Week list</h6></div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table mg-data-table mb-0">
+              <thead>
+                <tr>
+                  <th class="text-xs">Date</th>
+                  <th class="text-xs">Time</th>
+                  <th class="text-xs">Employee</th>
+                  <th class="text-xs">Building</th>
+                  <th class="text-xs text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="mg-s-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="mg-s-modal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="mg-s-modal-title">Schedule</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="mg-s-id">
+            <div class="mb-2">
+              <label class="form-label text-xs">Type</label>
+              <select class="form-select" id="mg-s-kind">
+                <option value="recurring">Recurring weekly</option>
+                <option value="one_time">One day only</option>
+              </select>
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Employee</label>
+              <select class="form-select" id="mg-s-emp"></select>
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Building</label>
+              <select class="form-select" id="mg-s-bldg"></select>
+            </div>
+            <div class="row">
+              <div class="col-6 mb-2">
+                <label class="form-label text-xs">Start</label>
+                <input type="time" class="form-control" id="mg-s-start" value="18:00">
+              </div>
+              <div class="col-6 mb-2">
+                <label class="form-label text-xs">End</label>
+                <input type="time" class="form-control" id="mg-s-end" value="23:00">
+              </div>
+            </div>
+            <div id="mg-s-recurring-fields">
+              <label class="form-label text-xs">Days</label>
+              <div class="mg-dow-pills mb-2" id="mg-s-days"></div>
+              <div class="row">
+                <div class="col-6 mb-2">
+                  <label class="form-label text-xs">Effective start</label>
+                  <input type="date" class="form-control" id="mg-s-eff-start">
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label text-xs">Effective end (optional)</label>
+                  <input type="date" class="form-control" id="mg-s-eff-end">
+                </div>
+              </div>
+            </div>
+            <div id="mg-s-onetime-fields" class="d-none mb-2">
+              <label class="form-label text-xs">Date</label>
+              <input type="date" class="form-control" id="mg-s-one-date">
+            </div>
+            <div class="mb-0">
+              <label class="form-label text-xs">Admin note (not shown to clients)</label>
+              <textarea class="form-control" id="mg-s-note" rows="2"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-sm btn-outline-danger mb-0 d-none" id="mg-s-delete">Remove schedule</button>
+            <div>
+              <button type="button" class="btn btn-sm btn-outline-secondary mb-0" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-s-save">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="mg-s-ex-modal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">One-day exception</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="mg-ex-schedule-id">
+            <p class="text-sm" id="mg-ex-summary"></p>
+            <div class="mb-2">
+              <label class="form-label text-xs">Date</label>
+              <input type="date" class="form-control" id="mg-ex-date" readonly>
+            </div>
+            <div class="mb-2">
+              <label class="form-label text-xs">Exception</label>
+              <select class="form-select" id="mg-ex-type">
+                <option value="skip">Employee off / remove this day</option>
+                <option value="override">Change coverage or hours this day only</option>
+              </select>
+            </div>
+            <div id="mg-ex-override-fields" class="d-none">
+              <div class="mb-2">
+                <label class="form-label text-xs">Employee this day</label>
+                <select class="form-select" id="mg-ex-emp"></select>
+              </div>
+              <div class="row">
+                <div class="col-6 mb-2">
+                  <label class="form-label text-xs">Start</label>
+                  <input type="time" class="form-control" id="mg-ex-start">
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label text-xs">End</label>
+                  <input type="time" class="form-control" id="mg-ex-end">
+                </div>
+              </div>
+            </div>
+            <div class="mb-0">
+              <label class="form-label text-xs">Note</label>
+              <input type="text" class="form-control" id="mg-ex-note" placeholder="Optional">
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-sm btn-outline-danger mb-0 d-none" id="mg-ex-clear">Remove exception</button>
+            <div>
+              <button type="button" class="btn btn-sm btn-outline-secondary mb-0" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-sm bg-gradient-dark mb-0" id="mg-ex-save">Save exception</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/admin-auth.js"></script>
+  <script src="../js/admin-shell.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      MgAdminShell.init({ page: 'staffing' });
+    });
+  </script>
+  <script src="../assets/js/core/popper.min.js"></script>
+  <script src="../assets/js/core/bootstrap.min.js"></script>
+  <script src="routes/staffing-page.js"></script>
+  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.7"></script>
+</body>
+</html>

@@ -79,7 +79,16 @@ body.mg-admin-app {
   margin: 0;
 }
 
-.mg-toolbar {
+.mg-page-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.mg-page-tabs .btn {
+  margin-bottom: 0;
+}
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
